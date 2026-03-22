@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baphalmoniácos - Oficial IFPB</title>
+    <style>
+        :root {
+            --vermelho: #c62828;
+            --verde: #2e7d32;
+            --fundo: #fff5f5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--fundo); scroll-behavior: smooth; color: #333; }
+
+        /* 1. MENU FIXO */
+        header { 
+            background: var(--vermelho); 
+            padding: 15px 5%; 
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+
+        /* 2. BANNER (HERO) */
+        .hero { 
+            height: 350px; 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://p2.trrsf.com/image/fget/cf/1200/900/middle/images.terra.com/2023/07/28/1199320667-kimchi-coreano.jpg') center/cover;
+            display: flex; align-items: center; justify-content: center; color: white; text-align: center;
+        }
+
+        section { padding: 60px 10%; }
+        h2 { margin-bottom: 30px; color: var(--vermelho); text-align: center; font-size: 2rem; }
+
+        /* 3. SOBRE NÓS (TEXTO QUE CRIAMOS) */
+        .sobre-content { background: white; padding: 40px; border-radius: 15px; line-height: 1.8; text-align: center; max-width: 900px; margin: 0 auto; }
+
+        /* 4. LOGIN E CADASTRO */
+        .auth-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .auth-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        .auth-box h3 { color: var(--vermelho); margin-bottom: 15px; }
+        .auth-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+
+        /* 5. CARDÁPIO */
+        .grid-produtos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; }
+        .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; }
+        .card h3 { margin: 15px 0 5px; }
+
+        /* 6. CARRINHO  */
+        .area-carrinho { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
+        
+        /* BOTÕES */
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-vermelho { background: var(--vermelho); color: white; width: 100%; }
+        .btn-verde { background: var(--verde); color: white; width: 100%; margin-top: 15px; }
+        .btn-remover { background: #ffeded; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 5px 10px; }
+
+        footer { background: #222; color: white; padding: 30px; text-align: center; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#sobre">Nossa História</a></li>
+                <li><a href="#login">Entrar</a></li>
+                <li><a href="#cardapio">Cardápio</a></li>
+                <li><a href="#pedido">Meu Carrinho</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero" style="padding: 0;">
+        <div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">O calor do fogão e o carinho da vovó!</h1>
+            <p style="font-size: 1.2rem;">Sinta a tradição coreana em cada detalhe.</p>
+        </div>
+    </section>
+
+    <section id="sobre">
+        <h2>Nossa História</h2>
+        <div class="sobre-content">
+            <p>O <strong>Baphalmoniácos</strong> surgiu do nosso desejo, <strong>Júlia Rayane e Maria Isabely</strong>, de compartilhar o conforto da culinária coreana. Acreditamos que cada prato carrega o carinho de uma receita de vó, e nossa missão é levar esse sabor autêntico e acolhedor direto para a sua mesa. Mais do que um simples cardápio, quisemos apresentar a cultura coreana de um jeito que desperte a curiosidade de todos para conhecer este universo de sabores únicos.</p>
+        </div>
+    </section>
+
+    <section id="login" style="background-color: #fdf2f2;">
+        <h2>Área do Cliente</h2>
+        <div class="auth-container">
+            <div class="auth-box">
+                <h3>Acessar à conta</h3>
+                <input type="email" id="l-email" placeholder="Seu e-mail">
+                <input type="password" placeholder="Sua senha">
+                <button class="btn btn-vermelho" onclick="alert('Bem-vindo!')">Entrar</button>
+            </div>
+            <div class="auth-box">
+                <h3>Criar nova conta</h3>
+                <input type="text" id="c-nome" placeholder="Nome Completo">
+                <input type="text" id="c-end" placeholder="Morada / Endereço Completo">
+                <input type="email" placeholder="E-mail">
+                <input type="password" placeholder="Criar Senha">
+                <button class="btn btn-verde" onclick="validarCadastro()">Finalizar Registo</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="cardapio">
+        <h2>Nosso Cardápio</h2>
+        <div id="vitrine" class="grid-produtos"></div>
+    </section>
+
+    <section id="pedido" style="background-color: #fdf2f2;">
+        <div class="area-carrinho">
+            <h2>Meu Pedido</h2>
+            <table id="tabela-pedido">
+                <thead>
+                    <tr>
+                        <th>Prato</th>
+                        <th>Preço</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+            <div style="text-align:right; margin-top:20px; font-weight:bold; font-size:1.4rem;">
+                Total: R$ <span id="soma-total">0.00</span>
+            </div>
+            <button class="btn btn-verde" style="font-size:1.1rem;" onclick="finalizar()">Confirmar Pedido (Pix ou Cartão)</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Baphalmoniácos | Júlia Rayane e Maria Isabely | IFPB</p>
+    </footer>
+
+    <script type="module">
+        // 1. DADOS (Simulando JSON)
+        const produtos = [
+            { id: 1, nome: "Tteokbokki", preco: 27.16, foto: "https://p2.trrsf.com/image/fget/cf/1200/900/middle/images.terra.com/2023/07/28/1199320667-kimchi-coreano.jpg" },
+            { id: 2, nome: "Buchimgae", preco: 10.98, foto: "https://static.itdg.com.br/repository/recipe/video/17/75/1775.jpg" },
+            { id: 3, nome: "Lámen Especial", preco: 9.99, foto: "https://m.media-amazon.com/images/I/51pS9k+O7KL._AC_SX679_.jpg" }
+        ];
+
+        let carrinho = [];
+
+        // 2. FUNÇÃO DE CADASTRO 
+        window.validarCadastro = () => {
+            const nome = document.getElementById("c-nome").value;
+            const morada = document.getElementById("c-end").value;
+            if(!nome || !morada) {
+                alert("Erro: Nome e Morada são obrigatórios!");
+            } else {
+                alert(`Sucesso! Bem-vindo(a), ${nome}`);
+            }
+        };
+
+        // 3. CARREGAR VITRINE (Geração Dinâmica)
+        function carregarCardapio() {
+            const vitrine = document.getElementById("vitrine");
+            produtos.forEach(p => {
+                vitrine.innerHTML += `
+                    <div class="card">
+                        <img src="${p.foto}">
+                        <h3>${p.nome}</h3>
+                        <p style="color:var(--vermelho); font-weight:bold;">R$ ${p.preco.toFixed(2)}</p>
+                        <button class="btn btn-verde" onclick="addAoCarrinho(${p.id})">Adicionar</button>
+                    </div>
+                `;
+            });
+        }
+
+        // 4. LÓGICA DO CARRINHO
+        window.addAoCarrinho = (id) => {
+            const prato = produtos.find(item => item.id === id);
+            const itemComIdUnico = { ...prato, cartId: Date.now() }; 
+            carrinho.push(itemComIdUnico);
+            atualizarTabela();
+        };
+
+        function atualizarTabela() {
+            const tbody = document.querySelector("#tabela-pedido tbody");
+            tbody.innerHTML = "";
+            let total = 0;
+
+            carrinho.forEach(item => {
+                total += item.preco;
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${item.nome}</td>
+                    <td>R$ ${item.preco.toFixed(2)}</td>
+                    <td><button class="btn-remover" onclick="removerItem(${item.cartId})">Remover</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById("soma-total").innerText = total.toFixed(2);
+        }
+
+        window.removerItem = (id) => {
+            carrinho = carrinho.filter(i => i.cartId !== id);
+            atualizarTabela();
+        };
+
+        window.finalizar = () => {
+            if(carrinho.length === 0) return alert("O seu carrinho está vazio!");
+            alert("Pedido Finalizado! Prepare-se para o sabor da Coreia!");
+        };
+
+        // Inicia o site
+        document.addEventListener("DOMContentLoaded", carregarCardapio);
+    </script>
+</body>
+</html>
