@@ -220,5 +220,9 @@
         // Inicia o site
         document.addEventListener("DOMContentLoaded", carregarCardapio);
     </script>
+    <footer style="text-align: center; padding: 20px; background-color: #fdf2f2;">
+    <p><strong>Baphalmoniácos</strong> - IFPB 2026</p>
+    <p>Link do Repositório: <a href="https://github.com/julia-rayane/Projeto-Baphalmoniacos" target="_blank">Acessar GitHub</a></p>
+</footer>
 </body>
 </html>
