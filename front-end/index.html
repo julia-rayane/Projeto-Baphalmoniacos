@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baphalmoniácos - Oficial IFPB</title>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
+    <nav>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#sobre">Nossa História</a></li>
+            <li><a href="#login">Entrar</a></li>
+            <li><a href="#cardapio">Cardápio</a></li>
+            <li><a href="#pedido">Meu Carrinho</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section id="home" class="hero">
+    <div>
+        <h1>O calor do fogão e o carinho da vovó!</h1>
+        <p>Sinta a tradição coreana em cada detalhe.</p>
+    </div>
+</section>
+
+<section id="sobre">
+    <h2>Nossa História</h2>
+    <div class="sobre-content">
+        <p>O <strong>Baphalmoniácos</strong> surgiu...</p>
+    </div>
+</section>
+
+<!-- FORM LOGIN -->
+<section id="login">
+    <h2>Área do Cliente</h2>
+
+    <form onsubmit="login(event)">
+        <input type="email" required placeholder="Seu e-mail">
+        <input type="password" required placeholder="Sua senha">
+        <button class="btn btn-vermelho" type="submit">Entrar</button>
+    </form>
+
+    <form onsubmit="validarCadastro(event)">
+        <input type="text" id="c-nome" placeholder="Nome Completo">
+        <input type="text" id="c-end" placeholder="Endereço">
+        <button class="btn btn-verde" type="submit">Cadastrar</button>
+    </form>
+</section>
+
+<section id="cardapio">
+    <h2>Nosso Cardápio</h2>
+    <div id="vitrine" class="grid-produtos"></div>
+</section>
+
+<section id="pedido">
+    <table>
+        <tbody id="tabela-pedido"></tbody>
+    </table>
+</section>
+
+<footer>
+    <p>&copy; 2026 Baphalmoniácos</p>
+</footer>
+
+<!-- JS -->
+<script type="module" src="./js/script.js"></script>
+</body>
+</html>
