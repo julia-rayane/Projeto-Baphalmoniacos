@@ -1,4 +1,4 @@
-// Aqui ficam os seus dados (Ingredientes da cozinha)
+// Aqui fica os dados
 export const produtos = [
     { 
         id: 1, 
