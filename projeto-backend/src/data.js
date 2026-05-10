@@ -4,7 +4,7 @@ export const produtos = [
         id: 1, 
         nome: "Tteokbokki", 
         preco: 27.16, 
-        foto: "https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=500" 
+        foto: "tteokbokki.png" 
     },
     { 
         id: 2, 
