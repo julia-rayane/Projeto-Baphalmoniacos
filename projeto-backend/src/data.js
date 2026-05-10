@@ -10,7 +10,7 @@ export const produtos = [
         id: 2, 
         nome: "Buchimgae", 
         preco: 10.98, 
-        foto: "https://www.thespruceeats.com/thmb/9W6-7L20lYp6f9yU8lX7r9m1_6o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/korean-pancake-pajeon-2118742-Hero-5b72e9a246e0fb00259e8f6e.jpg" 
+        foto: "buchimgae.png" 
     },
     { 
         id: 3, 
