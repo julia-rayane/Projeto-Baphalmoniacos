@@ -3,7 +3,7 @@ let produtosDaAPI = [];
 
 // 1. Busca os produtos no Back-end
 function carregarCardapio() {
-    fetch("http://localhost:3000/produtos")
+    fetch("/produtos")
         .then(resposta => resposta.json())
         .then(dados => {
             produtosDaAPI = dados;
