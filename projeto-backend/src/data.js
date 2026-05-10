@@ -16,6 +16,6 @@ export const produtos = [
         id: 3, 
         nome: "Lámen Especial", 
         preco: 9.99, 
-        foto: "https://cdn.casaogawa.com.br/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/n/o/nongshim_shin_ramyun_cup_68g.jpg" 
+        foto: "lámen.png" 
     }
 ];
