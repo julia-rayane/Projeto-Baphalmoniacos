@@ -1,9 +1,8 @@
 import express from 'express';
 import { produtos } from './data.js';
-
 const routes = express.Router();
 
-// Rota de Leitura (que você já tinha)
+// Rota de Leitura 
 routes.get('/produtos', (req, res) => {
     res.json(produtos);
 });
@@ -25,4 +24,4 @@ routes.delete('/produtos/:id', (req, res) => {
     res.send('Aqui você deletaria um produto'); 
 });
 
-export default routes; // <--- Essa linha tem que ser sempre a última!
+export default routes; 
