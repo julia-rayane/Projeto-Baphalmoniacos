@@ -7,10 +7,8 @@ import { fileURLToPath } from 'url';
 // Importando as rotas do seu projeto
 import routes from './routes.js';
 
-// CORRIGIDO: Agora aponta exatamente para os arquivos reais da sua pasta database
-import { getDatabaseConnection } from './database/connection.js';
-import { runMigrations } from './database/migrations.js';
-import { runSeeds } from './database/seeds.js';
+// CORRIGIDO: Puxando tudo direto do único arquivo real que está na pasta database (connection.js)
+import { getDatabaseConnection, runMigrations, runSeeds } from './database/connection.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,20 +21,20 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Servir os arquivos do seu front-end
+// Servir os arquivos do seu front-end (public fica fora de src)
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Ativando as rotas da API
 app.use(routes);
 
-// Inicialização corrigida para rodar as tabelas e seeds da sua pasta
+// Inicialização baseada nas funções do connection.js
 async function startServer() {
   try {
     // Abre a conexão com o banco de dados
     const db = await getDatabaseConnection();
     console.log('📦 Banco de dados SQLite conectado!');
     
-    // Executa as migrações (cria as tabelas) e as sementes (coloca os dados)
+    // Executa as migrações (cria as tabelas) e as sementes (coloca os dados) do connection.js
     await runMigrations(db);
     await runSeeds(db);
 
