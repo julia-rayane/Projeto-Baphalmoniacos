@@ -1,27 +1,14 @@
-import express from 'express';
-import { produtos } from './data.js';
-const routes = express.Router();
+import { Router } from 'express';
+// Importa todas as funções lógicas que você acabou de criar no Controller
+import * as ProductController from './controllers/productController.js';
 
-// Rota de Leitura 
-routes.get('/produtos', (req, res) => {
-    res.json(produtos);
-});
+const routes = Router();
 
-// --- O CRUD COMPLETO (SÓ AS ROTAS POR ENQUANTO) ---
+// Mapeamento das rotas do CRUD de produtos 
+routes.get('/produtos', ProductController.listProducts);
+routes.get('/produtos/:id', ProductController.showProduct);
+routes.post('/produtos', ProductController.addProduct);
+routes.put('/produtos/:id', ProductController.editProduct);
+routes.delete('/produtos/:id', ProductController.removeProduct);
 
-// Rota de Criação (POST)
-routes.post('/produtos', (req, res) => { 
-    res.send('Aqui você criaria um produto'); 
-});
-
-// Rota de Atualização (PUT)
-routes.put('/produtos/:id', (req, res) => { 
-    res.send('Aqui você editaria um produto'); 
-});
-
-// Rota de Exclusão (DELETE)
-routes.delete('/produtos/:id', (req, res) => { 
-    res.send('Aqui você deletaria um produto'); 
-});
-
-export default routes; 
+export default routes;
