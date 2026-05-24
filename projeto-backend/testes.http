@@ -1,18 +1,63 @@
-### Testar a listagem de produtos (GET)
-GET http://localhost:3000/produtos
+### Configuração da URL Base
+@baseUrl = http://localhost:3000
+
+### 1. LISTAR TODOS OS PRODUTOS (READ)
+GET {{baseUrl}}/produtos
+Content-Type: application/json
 
 ###
 
-### Testar a adição de um novo produto (POST)
-POST http://localhost:3000/produtos
+### 2. BUSCAR PRODUTO POR ID ESPECÍFICO (READ)
+GET {{baseUrl}}/produtos/1
+Content-Type: application/json
+
+###
+
+### 3. TESTAR ERRO 404 - BUSCAR ID QUE NÃO EXISTE
+GET {{baseUrl}}/produtos/999
+Content-Type: application/json
+
+###
+
+### 4. ADICIONAR UM NOVO PRODUTO (CREATE)
+POST {{baseUrl}}/produtos
 Content-Type: application/json
 
 {
-  "nome": "Bibimbap",
-  "preco": 35.50
+  "nome": "Jjajangmyeon",
+  "descricao": "Macarrão com molho de soja preta espesso, legumes e carne",
+  "preco": 32.00,
+  "foto": "buchimgae.png",
+  "id_categoria_fk": 1
 }
 
 ###
 
-### Testar a remoção de um produto (DELETE)
-DELETE http://localhost:3000/produtos/1
+### 5. TESTAR ERRO 400 - TENTAR CRIAR SEM CAMPOS OBRIGATÓRIOS (VALIDAÇÃO)
+POST {{baseUrl}}/produtos
+Content-Type: application/json
+
+{
+  "nome": "Prato Incompleto",
+  "preco": 20.00
+}
+
+###
+
+### 6. ATUALIZAR UM PRODUTO EXISTENTE (UPDATE)
+PUT {{baseUrl}}/produtos/3
+Content-Type: application/json
+
+{
+  "nome": "Bibimbap Especial Turbinado",
+  "descricao": "Arroz com mix de vegetais, carne, ovo e um toque do chefe",
+  "preco": 38.50,
+  "foto": "buchimgae.png",
+  "id_categoria_fk": 1
+}
+
+###
+
+### 7. REMOVER UM PRODUTO (DELETE)
+DELETE {{baseUrl}}/produtos/1
+Content-Type: application/json
