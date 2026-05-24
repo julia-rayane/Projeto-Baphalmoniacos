@@ -1,21 +1,50 @@
 import express from 'express';
-import morgan from 'morgan';
 import cors from 'cors';
-import routes from './routes.js'; // Importa o arquivo de rotas
+import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Importando as rotas do seu projeto
+import routes from './routes.js';
+
+// Importando as configurações do banco de dados 
+import { getDatabaseConnection } from './database/connection.js';
+import { runMigrations } from './database/migrations.js';
+import { runSeeds } from './database/seeds.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = 3000;
 
-app.use(express.json());
-app.use(morgan('dev'));
 app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
 
-// AJUSTE DO PROFESSOR: Define a pasta public para arquivos estáticos
-app.use(express.static('public'));
+// Servir os arquivos front-end (HTML, CSS, Imagens)
+app.use(express.static(path.join(__dirname, '../public')));
 
-// Usa as rotas que separamos no outro arquivo
+// Ativando as rotas da API
 app.use(routes);
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Baphalmoníacos API: Servidor rodando em http://localhost:${PORT}`);
-});
+// Função para ligar o banco de dados e depois o servidor
+async function startServer() {
+  try {
+    const db = await getDatabaseConnection();
+    
+    // Cria as tabelas e coloca os dados do cardápio lá dentro
+    await runMigrations(db);
+    await runSeeds(db);
+
+    // Liga o servidor na porta 3000
+    app.listen(PORT, () => {
+      console.log('🚀 Servidor rodando em http://localhost:3000');
+    });
+  } catch (error) {
+    console.error('Erro ao inicializar o banco de dados:', error);
+  }
+}
+
+// Executa a função acima para dar a partida no projeto
+startServer();
