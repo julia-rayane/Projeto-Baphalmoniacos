@@ -1,8 +1,8 @@
-import { getDatabaseConnection } from '../database/connection.js';
+import connect from '../database/database.js';
 
 // 1. READ - Listar todos os produtos do banco (Igual ao print do professor)
 export async function getAllProducts() {
-  const db = await getDatabaseConnection();
+  const db = await connect();
   return db.all('SELECT * FROM produto');
 }
 
