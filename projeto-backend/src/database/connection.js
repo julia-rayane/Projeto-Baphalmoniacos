@@ -61,8 +61,8 @@ export async function runSeeds(db) {
     // CORRIGIDO: Inserir pratos com as descrições reais e apetitosas para o cardápio
     await db.run(`
       INSERT INTO produto (nome, descricao, preco, disponibilidade, foto, id_categoria_fk) VALUES 
-      ('Lámen Especial', 'Macarrão coreano tradicional servido em um caldo quente e apimentado com vegetais frescos e ovo.', 22.50, 1, 'buchimgae.png', ${catId}),
-      ('Bibimbap Mix', 'Tradicional tigela de arroz coberta com um mix de vegetais coloridos, carne marinada e ovo frito.', 36.00, 1, 'buchimgae.png', ${catId}),
+      ('Lámen', 'Macarrão coreano tradicional servido em um caldo quente e apimentado com vegetais frescos e ovo.', 22.50, 1, 'lámen.png', ${catId}),
+      ('Buchimgae', 'Tradicional tigela de arroz coberta com um mix de vegetais coloridos, carne marinada e ovo frito.', 36.00, 1, 'buchimgae.png', ${catId}),
       ('Tteokbokki', 'Bolinhos de arroz super macios e mastigáveis, cozidos em um delicioso molho de pimenta doce.', 28.00, 1, 'tteokbokki.png', ${catId})
     `);
     
