@@ -1,6 +1,6 @@
 import * as ProductModel from '../models/productModel.js';
 
-// 1. LISTAR TODOS (GET /produtos) - Igual ao material do professor
+// 1. LISTAR TODOS (GET /produtos) 
 export async function listProducts(req, res) {
   try {
     const products = await ProductModel.getAllProducts();
@@ -26,7 +26,7 @@ export async function showProduct(req, res) {
   }
 }
 
-// 3. CRIAR NOVO (POST /produtos) - Com as validações exigidas na nota!
+// 3. CRIAR NOVO (POST /produtos) - Com as validações exigidas no material
 export async function addProduct(req, res) {
   try {
     const { nome, descricao, preco, foto, id_categoria_fk } = req.body;
