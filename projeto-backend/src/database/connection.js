@@ -61,10 +61,9 @@ export async function runSeeds(db) {
     // Inserir os pratos do restaurante
     await db.run(`
       INSERT INTO produto (nome, descricao, preco, disponibilidade, foto, id_categoria_fk) VALUES 
-      ('Bulgogi', 'Carne de gado fatiada finamente e marinada em molho de soja', 45.00, 1, 'buchimgae.png', ${catId}),
-      ('Kimchi', 'Acelga fermentada e condimentada com pimenta coreana', 22.50, 1, 'buchimgae.png', ${catId}),
+      ('Lámen', 'Lámen com pimenta coreana', 22.50, 1, 'buchimgae.png', ${catId}),
       ('Bibimbap', 'Arroz com mix de vegetais, carne e ovo por cima', 36.00, 1, 'buchimgae.png', ${catId}),
-      ('Tteokbokki', 'Bolinhos de arroz macios banhados em molho de pimenta doce', 28.00, 1, 'buchimgae.png', ${catId})
+      ('Tteokbokki', 'Bolinhos de arroz macios banhados em molho de pimenta doce', 28.00, 1, 'tteokbokki.png', ${catId})
     `);
     
     console.log('Produtos do cardápio inseridos com sucesso!');
