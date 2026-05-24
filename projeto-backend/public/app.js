@@ -16,15 +16,18 @@ function carregarCardapio() {
                         <img src="${p.foto}" alt="${p.nome}">
                         <h3>${p.nome}</h3>
                         <p>R$ ${p.preco.toFixed(2)}</p>
-                        <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id})">Adicionar</button>
+                        {/* CORRIGIDO AQUI: Mudou de p.id para p.id_produto */}
+                        <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id_produto})">Adicionar</button>
                     </div>`;
             });
-        });
+        })
+        .catch(erro => console.error("Erro ao carregar os dados da API:", erro));
 }
 
 // 2. Adiciona o produto à lista do carrinho
 window.addAoCarrinho = function(id) {
-    const prato = produtosDaAPI.find(p => p.id === id);
+    // CORRIGIDO AQUI: Mudou de p.id para p.id_produto
+    const prato = produtosDaAPI.find(p => p.id_produto === id);
     if (prato) {
         carrinho.push(prato);
         atualizarCarrinho();
@@ -33,7 +36,6 @@ window.addAoCarrinho = function(id) {
 
 // 3. Atualiza a tabela com os nomes que estão no seu HTML
 function atualizarCarrinho() {
-    // Usando os IDs exatos do seu HTML: 'tabela-pedido' e 'soma-total'
     const tabelaBody = document.querySelector("#tabela-pedido tbody");
     const campoSoma = document.getElementById("soma-total");
     
@@ -58,3 +60,6 @@ window.removerItem = function(index) {
     carrinho.splice(index, 1);
     atualizarCarrinho();
 }
+
+// 🌟 ADICIONADO AQUI: Força o navegador a rodar a função assim que carregar o arquivo!
+carregarCardapio();
