@@ -15,8 +15,12 @@ function carregarCardapio() {
                     <div class="card">
                         <img src="${p.foto}" alt="${p.nome}">
                         <h3>${p.nome}</h3>
-                        <p>R$ ${p.preco.toFixed(2)}</p>
-                        {/* CORRIGIDO AQUI: Mudou de p.id para p.id_produto */}
+                        <p style="font-weight: bold; color: var(--vermelho); margin-bottom: 5px;">R$ ${p.preco.toFixed(2)}</p>
+                        
+                        <p style="font-size: 0.85rem; color: #666; margin: 10px 0; min-height: 40px; line-height: 1.4;">
+                            ${p.descricao}
+                        </p>
+                        
                         <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id_produto})">Adicionar</button>
                     </div>`;
             });
@@ -26,7 +30,6 @@ function carregarCardapio() {
 
 // 2. Adiciona o produto à lista do carrinho
 window.addAoCarrinho = function(id) {
-    // CORRIGIDO AQUI: Mudou de p.id para p.id_produto
     const prato = produtosDaAPI.find(p => p.id_produto === id);
     if (prato) {
         carrinho.push(prato);
@@ -61,5 +64,5 @@ window.removerItem = function(index) {
     atualizarCarrinho();
 }
 
-// 🌟 ADICIONADO AQUI: Força o navegador a rodar a função assim que carregar o arquivo!
+// Inicializa a vitrine
 carregarCardapio();
