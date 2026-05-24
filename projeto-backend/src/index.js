@@ -7,8 +7,10 @@ import { fileURLToPath } from 'url';
 // Importando as rotas do seu projeto
 import routes from './routes.js';
 
-// Ajustado para o nome real do arquivo do seu professor (database.js e load.js)
-import connect from './database/database.js';
+// CORRIGIDO: Agora aponta exatamente para os arquivos reais da sua pasta database
+import { getDatabaseConnection } from './database/connection.js';
+import { runMigrations } from './database/migrations.js';
+import { runSeeds } from './database/seeds.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,12 +29,16 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Ativando as rotas da API
 app.use(routes);
 
-// Inicialização baseada no seu professor
+// Inicialização corrigida para rodar as tabelas e seeds da sua pasta
 async function startServer() {
   try {
-    // Abre a conexão com o banco db.sqlite
-    await connect();
+    // Abre a conexão com o banco de dados
+    const db = await getDatabaseConnection();
     console.log('📦 Banco de dados SQLite conectado!');
+    
+    // Executa as migrações (cria as tabelas) e as sementes (coloca os dados)
+    await runMigrations(db);
+    await runSeeds(db);
 
     // Liga o servidor na porta 3000
     app.listen(PORT, () => {
