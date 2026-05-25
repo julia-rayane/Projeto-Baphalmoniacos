@@ -1,5 +1,4 @@
-import { getDatabaseConnection } from '../database/connection.js';
-
+import { conectarBanco } from '../database/connection.js';
 // 1. READ - Listar todos os produtos do banco (CORRIGIDO: usando getDatabaseConnection)
 export async function getAllProducts() {
   const db = await getDatabaseConnection();
