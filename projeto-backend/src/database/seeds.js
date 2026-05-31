@@ -1,4 +1,4 @@
-import { conectarBanco } from './connection.js';
+import { conectarBanco } from './database.js';
 
 export async function rodarSeeds() {
   const db = await conectarBanco();
