@@ -1,4 +1,4 @@
-import { conectarBanco } from './connection.js';
+import { conectarBanco } from './database.js';
 
 export async function rodarMigrations() {
   const db = await conectarBanco();
