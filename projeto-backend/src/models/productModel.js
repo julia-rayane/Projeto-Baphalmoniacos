@@ -1,4 +1,4 @@
-import { conectarBanco } from '../database/connection.js';
+import { conectarBanco } from '../database/database.js';
 
 // 1. READ - Listar todos os produtos trazendo os dados da categoria (JOIN)
 export async function getAllProducts() {
