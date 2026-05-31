@@ -1,9 +1,14 @@
 import { conectarBanco } from '../database/connection.js';
 
-// 1. READ - Listar todos os produtos do banco (CORRIGIDO: usando conectarBanco)
+// 1. READ - Listar todos os produtos trazendo os dados da categoria (JOIN)
 export async function getAllProducts() {
   const db = await conectarBanco();
-  return db.all('SELECT * FROM produto');
+  // Ajustado para fazer INNER JOIN e trazer o nome_categoria corrigido
+  return db.all(`
+    SELECT p.*, c.nome_categoria 
+    FROM produto p
+    INNER JOIN categoria c ON p.id_categoria_fk = c.id_categoria
+  `);
 }
 
 // 2. READ - Buscar um produto específico pelo ID
@@ -18,7 +23,7 @@ export async function createProduct(productData) {
   const { nome, descricao, preco, disponibilidade, foto, id_categoria_fk } = productData;
   const result = await db.run(
     'INSERT INTO produto (nome, descricao, preco, disponibilidade, foto, id_categoria_fk) VALUES (?, ?, ?, ?, ?, ?)',
-    [nome, descricao, preco, disponibilidade || 1, foto, id_categoria_fk]
+    [nome, descricao, preco, disponibilidade !== undefined ? disponibilidade : 1, foto, id_categoria_fk]
   );
   return result.lastID;
 }
