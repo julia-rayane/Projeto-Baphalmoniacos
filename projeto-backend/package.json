@@ -4,7 +4,8 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "db:load": "node src/database/migration.js && node src/database/seeds.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
