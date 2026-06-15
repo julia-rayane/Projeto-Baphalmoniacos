@@ -1,45 +1,53 @@
-import { conectarBanco } from '../database/database.js';
+import { obterConexao } from '@/database/database.ts';
+import { IProduto, IProdutoComCategoria } from '@/types/index.ts';
 
-// 1. READ - Listar todos os produtos trazendo os dados da categoria (JOIN)
-export async function getAllProducts() {
-  const db = await conectarBanco();
-  // Ajustado para fazer INNER JOIN e trazer o nome_categoria corrigido
+// 1. LISTAR TODOS (Com JOIN para trazer o nome da categoria automaticamente)
+async function listarTodos(): Promise<IProdutoComCategoria[]> {
+  const db = await obterConexao();
   return db.all(`
-    SELECT p.*, c.nome_categoria 
-    FROM produto p
-    INNER JOIN categoria c ON p.id_categoria_fk = c.id_categoria
+    SELECT p.*, c.nome AS categoria_nome 
+    FROM produtos p
+    LEFT JOIN categorias c ON p.id_categoria_fk = c.id
   `);
 }
 
-// 2. READ - Buscar um produto específico pelo ID
-export async function getProductById(id) {
-  const db = await conectarBanco();
-  return db.get('SELECT * FROM produto WHERE id_produto = ?', [id]);
+// 2. BUSCAR POR ID (Também com JOIN)
+async function buscarPorId(id: number): Promise<IProdutoComCategoria | undefined> {
+  const db = await obterConexao();
+  return db.get(`
+    SELECT p.*, c.nome AS categoria_nome 
+    FROM produtos p
+    LEFT JOIN categorias c ON p.id_categoria_fk = c.id
+    WHERE p.id = ?
+  `, [id]);
 }
 
-// 3. CREATE - Inserir um novo produto no banco
-export async function createProduct(productData) {
-  const db = await conectarBanco();
-  const { nome, descricao, preco, disponibilidade, foto, id_categoria_fk } = productData;
-  const result = await db.run(
-    'INSERT INTO produto (nome, descricao, preco, disponibilidade, foto, id_categoria_fk) VALUES (?, ?, ?, ?, ?, ?)',
-    [nome, descricao, preco, disponibilidade !== undefined ? disponibilidade : 1, foto, id_categoria_fk]
-  );
-  return result.lastID;
+// 3. CRIAR NOVO PRODUTO
+async function criar(produto: Omit<IProduto, 'id'>): Promise<number> {
+  const db = await obterConexao();
+  const resultado = await db.run(`
+    INSERT INTO produtos (nome, descricao, preco, foto, id_categoria_fk)
+    VALUES (?, ?, ?, ?, ?)
+  `, [produto.nome, produto.descricao, produto.preco, produto.foto, produto.id_categoria_fk]);
+  return resultado.lastID!;
 }
 
-// 4. UPDATE - Alterar os dados de um produto existente
-export async function updateProduct(id, productData) {
-  const db = await conectarBanco();
-  const { nome, descricao, preco, disponibilidade, foto, id_categoria_fk } = productData;
-  return db.run(
-    'UPDATE produto SET nome = ?, descricao = ?, preco = ?, disponibilidade = ?, foto = ?, id_categoria_fk = ? WHERE id_produto = ?',
-    [nome, descricao, preco, disponibilidade, foto, id_categoria_fk, id]
-  );
+// 4. ATUALIZAR PRODUTO EXISTENTE
+async function atualizar(id: number, produto: Omit<IProduto, 'id'>): Promise<boolean> {
+  const db = await obterConexao();
+  const resultado = await db.run(`
+    UPDATE produtos 
+    SET nome = ?, descricao = ?, preco = ?, foto = ?, id_categoria_fk = ?
+    WHERE id = ?
+  `, [produto.nome, produto.descricao, produto.preco, produto.foto, produto.id_categoria_fk, id]);
+  return (resultado.changes ?? 0) > 0;
 }
 
-// 5. DELETE - Remover um produto do banco de dados
-export async function deleteProduct(id) {
-  const db = await conectarBanco();
-  return db.run('DELETE FROM produto WHERE id_produto = ?', [id]);
+// 5. EXCLUIR PRODUTO
+async function excluir(id: number): Promise<boolean> {
+  const db = await obterConexao();
+  const resultado = await db.run('DELETE FROM produtos WHERE id = ?', [id]);
+  return (resultado.changes ?? 0) > 0;
 }
+
+export default { listarTodos, buscarPorId, criar, atualizar, excluir };
