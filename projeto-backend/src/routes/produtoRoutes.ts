@@ -6,7 +6,7 @@ import {
   criarProduto, 
   atualizarProduto, 
   removerProduto 
-} from '@/controllers/productController.ts';
+} from '../controllers/productController.js'; // Usando caminho relativo e .js
 
 const router = Router();
 
