@@ -4,9 +4,13 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { exigirJson } from './middlewares/jsonValidation.js'; // Mude de .ts para .js
+// Importando os middlewares com caminhos relativos
+import { exigirJson } from './middlewares/jsonValidation.js';
 import { manipuladorDeErros } from './middlewares/errorHandler.js';
+
+// Importando os roteadores em TypeScript
 import produtoRoutes from './routes/produtoRoutes.js';
+import categoriaRoutes from './routes/categoriaRoutes.js'; // 👈 Adicionado aqui!
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -21,8 +25,9 @@ app.use(exigirJson);
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Ativando o roteador de produtos na rota /produtos
+// Ativando as rotas do sistema
 app.use('/produtos', produtoRoutes);
+app.use('/categorias', categoriaRoutes); // 👈 Adicionado aqui!
 
 // 🚨 Middleware centralizado para tratamento de erros
 app.use(manipuladorDeErros);
