@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import produtoModel from '@/models/produtoModel.ts';
-import { HttpError } from '@/errors/HttpError.ts';
-
+import produtoModel from '../models/productModel.js';
+import { HttpError } from '../errors/HttpError.js';
 // 1. LISTAR TODOS OS PRODUTOS
 export async function listarProdutos(req: Request, res: Response, next: NextFunction) {
   try {
