@@ -3,7 +3,7 @@ import { HttpError } from '../errors/HttpError.js';
 
 export function manipuladorDeErros(err: Error, req: Request, res: Response, next: NextFunction) {
   if (err instanceof HttpError) {
-    res.status(err.statusCode).json({ erro: err.message });
+    res.status(error.statusCode).json({ error: error.message });
     return;
   }
   
