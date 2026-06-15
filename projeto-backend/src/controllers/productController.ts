@@ -1,83 +1,92 @@
-import * as ProductModel from '../models/productModel.js';
+import { Request, Response, NextFunction } from 'express';
+import produtoModel from '@/models/produtoModel.ts';
+import { HttpError } from '@/errors/HttpError.ts';
 
-// 1. LISTAR TODOS (GET /produtos) 
-export async function listProducts(req, res) {
+// 1. LISTAR TODOS OS PRODUTOS
+export async function listarProdutos(req: Request, res: Response, next: NextFunction) {
   try {
-    const products = await ProductModel.getAllProducts();
-    return res.status(200).json(products);
+    const produtos = await produtoModel.listarTodos();
+    res.json(produtos);
   } catch (error) {
-    return res.status(500).json({ error: 'Erro ao listar produtos.' });
+    next(error); // Encaminha o erro para o nosso errorHandler centralizado
   }
 }
 
-// 2. BUSCAR POR ID (GET /produtos/:id)
-export async function showProduct(req, res) {
+// 2. BUSCAR PRODUTO POR ID
+export async function buscarProduto(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.params;
-    const product = await ProductModel.getProductById(id);
-    
-    if (!product) {
-      return res.status(404).json({ error: 'Produto não encontrado.' });
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      throw new HttpError(400, 'O ID fornecido deve ser numérico.');
     }
-    
-    return res.status(200).json(product);
+
+    const produto = await produtoModel.buscarPorId(id);
+    if (!produto) {
+      throw new HttpError(404, 'Produto não encontrado.');
+    }
+
+    res.json(produto);
   } catch (error) {
-    return res.status(500).json({ error: 'Erro ao buscar produto.' });
+    next(error);
   }
 }
 
-// 3. CRIAR NOVO (POST /produtos) - Com as validações exigidas no material
-export async function addProduct(req, res) {
+// 3. CRIAR NOVO PRODUTO
+export async function criarProduto(req: Request, res: Response, next: NextFunction) {
   try {
     const { nome, descricao, preco, foto, id_categoria_fk } = req.body;
-
-    // Validação para garantir os 25 pontos do critério de erros do professor
-    if (!nome || !descricao || !preco || !id_categoria_fk) {
-      return res.status(400).json({ error: 'Os campos nome, descricao, preco e id_categoria_fk são obrigatórios.' });
-    }
-
-    const newProductId = await ProductModel.createProduct(req.body);
-    return res.status(201).json({ id_produto: newProductId, message: 'Produto criado com sucesso!' });
-  } catch (error) {
-    return res.status(500).json({ error: 'Erro ao criar produto.' });
-  }
-}
-
-// 4. ATUALIZAR (PUT /produtos/:id)
-export async function editProduct(req, res) {
-  try {
-    const { id } = req.params;
-    const { nome, descricao, preco, id_categoria_fk } = req.body;
-
-    const productExists = await ProductModel.getProductById(id);
-    if (!productExists) {
-      return res.status(404).json({ error: 'Produto não encontrado para atualização.' });
-    }
-
-    if (!nome || !descricao || !preco || !id_categoria_fk) {
-      return res.status(400).json({ error: 'Campos obrigatórios em falta.' });
-    }
-
-    await ProductModel.updateProduct(id, req.body);
-    return res.status(200).json({ message: 'Produto atualizado com sucesso!' });
-  } catch (error) {
-    return res.status(500).json({ error: 'Erro ao atualizar produto.' });
-  }
-}
-
-// 5. REMOVER (DELETE /produtos/:id)
-export async function removeProduct(req, res) {
-  try {
-    const { id } = req.params;
     
-    const productExists = await ProductModel.getProductById(id);
-    if (!productExists) {
-      return res.status(404).json({ error: 'Produto não encontrado para remoção.' });
+    // Validação de campos obrigatórios simples
+    if (!nome || !preco || !id_categoria_fk) {
+      throw new HttpError(400, 'Campos obrigatórios: nome, preco e id_categoria_fk.');
     }
 
-    await ProductModel.deleteProduct(id);
-    return res.status(200).json({ message: 'Produto removido com sucesso!' });
+    const novoId = await produtoModel.criar({ nome, descricao, preco, foto, id_categoria_fk });
+    res.status(201).json({ id: novoId, mensagem: 'Produto criado com sucesso.' });
   } catch (error) {
-    return res.status(500).json({ error: 'Erro ao remover produto.' });
+    next(error);
+  }
+}
+
+// 4. ATUALIZAR PRODUTO EXISTENTE
+export async function atualizarProduto(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      throw new HttpError(400, 'ID inválido.');
+    }
+
+    const { nome, descricao, preco, foto, id_categoria_fk } = req.body;
+    if (!nome || !preco || !id_categoria_fk) {
+      throw new HttpError(400, 'Campos obrigatórios ausentes para atualização.');
+    }
+
+    const sucesso = await produtoModel.atualizar(id, { nome, descricao, preco, foto, id_categoria_fk });
+    if (!sucesso) {
+      throw new HttpError(404, 'Produto não encontrado para atualização.');
+    }
+
+    res.json({ mensagem: 'Produto atualizado com sucesso.' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// 5. EXCLUIR PRODUTO
+export async function removerProduto(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      throw new HttpError(400, 'ID inválido.');
+    }
+
+    const sucesso = await produtoModel.excluir(id);
+    if (!sucesso) {
+      throw new HttpError(404, 'Produto não encontrado para exclusão.');
+    }
+
+    res.json({ mensagem: 'Produto removido com sucesso.' });
+  } catch (error) {
+    next(error);
   }
 }
