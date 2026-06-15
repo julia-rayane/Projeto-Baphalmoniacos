@@ -1,5 +1,5 @@
-import { obterConexao } from '@/database/database.ts';
-import { IProduto, IProdutoComCategoria } from '@/types/index.ts';
+import { obterConexao } from '../database/database.js';
+import { IProduto, IProdutoComCategoria } from '../types/index.js';
 
 // 1. LISTAR TODOS (Com JOIN para trazer o nome da categoria automaticamente)
 async function listarTodos(): Promise<IProdutoComCategoria[]> {
