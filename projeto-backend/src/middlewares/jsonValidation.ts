@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '../errors/HttpError.ts';
+import { HttpError } from '../errors/HttpError.js';
 
 export function exigirJson(req: Request, res: Response, next: NextFunction) {
   if (['POST', 'PUT'].includes(req.method)) {
