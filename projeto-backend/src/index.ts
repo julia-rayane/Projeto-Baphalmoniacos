@@ -4,13 +4,12 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Importando os novos middlewares usando o padrão alias @/ solicitado pelo professor
+// Importando os middlewares com alias @/
 import { exigirJson } from '@/middlewares/jsonValidation.ts';
 import { manipuladorDeErros } from '@/middlewares/errorHandler.ts';
 
-// Importando temporariamente o arquivo de rotas atual de vocês para não quebrar o fluxo
-// @ts-ignore
-import rotasAntigas from './routes.js';
+// Importando o novo roteador de produtos em TypeScript
+import produtoRoutes from '@/routes/produtoRoutes.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -25,10 +24,10 @@ app.use(exigirJson);
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Ativando as rotas atuais de vocês
-app.use(rotasAntigas);
+// Ativando o roteador de produtos na rota /produtos
+app.use('/produtos', produtoRoutes);
 
-// 🚨 Middleware centralizado para tratamento de erros (deve ser o último app.use)
+// 🚨 Middleware centralizado para tratamento de erros
 app.use(manipuladorDeErros);
 
 app.listen(PORT, () => {
