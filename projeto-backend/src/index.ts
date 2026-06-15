@@ -4,12 +4,9 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Importando os middlewares com alias @/
-import { exigirJson } from '@/middlewares/jsonValidation.ts';
-import { manipuladorDeErros } from '@/middlewares/errorHandler.ts';
-
-// Importando o novo roteador de produtos em TypeScript
-import produtoRoutes from '@/routes/produtoRoutes.ts';
+import { exigirJson } from './middlewares/jsonValidation.js'; // Mude de .ts para .js
+import { manipuladorDeErros } from './middlewares/errorHandler.js';
+import produtoRoutes from './routes/produtoRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
