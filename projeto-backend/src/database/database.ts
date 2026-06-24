@@ -7,14 +7,30 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let dbInstance: Database | null = null;
 
-// Função para obter a conexão com o banco de forma assíncrona e tipada
 export async function obterConexao(): Promise<Database> {
   if (!dbInstance) {
     dbInstance = await open({
-      // Aponta exatamente para o arquivo de banco de dados SQLite de vocês
       filename: path.join(__dirname, 'baphalmoniacos.db'), 
       driver: sqlite3.Database
     });
+
+    // 🚀 CRIA AS TABELAS AUTOMATICAMENTE SE ELAS NÃO EXISTIREM!
+    await dbInstance.exec(`
+      CREATE TABLE IF NOT EXISTS categorias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS produtos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        preco REAL NOT NULL,
+        descricao TEXT,
+        id_categoria_fk INTEGER,
+        FOREIGN KEY (id_categoria_fk) REFERENCES categorias(id)
+      );
+    `);
+    console.log('✅ Banco de dados inicializado e tabelas verificadas!');
   }
   return dbInstance;
 }
