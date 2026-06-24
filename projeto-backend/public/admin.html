@@ -2,48 +2,59 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Baphalmoníacos - Painel Admin</title>
+    <title>Baphalmoníacos - Administração</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #fdf3f3; color: #333; padding: 20px; }
-        .box { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h2 { color: #b32424; }
-        input, select, textarea { width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #248a3d; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdf3f3; color: #333; padding: 30px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .box { background: white; padding: 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { color: #b32424; margin-top: 0; border-bottom: 2px solid #fde1e1; padding-bottom: 8px; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 6px 0 15px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { background: #248a3d; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
         button:hover { background: #1c6b2f; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #b32424; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1>Painel de Controle - Baphalmoníacos 🍜</h1>
-    <a href="index.html" style="color: #b32424; text-decoration: none; font-weight: bold;">← Voltar para o Site</a>
-    <br><br>
+    <div class="container">
+        <a href="/" class="back-link">← Voltar para o Site principal</a>
+        <h1>Painel de Controle 🍜</h1>
+        <p>Cadastre aqui as categorias e pratos para alimentar o cardápio automaticamente.</p>
 
-    <div class="box">
-        <h2>1. Cadastrar Nova Categoria</h2>
-        <form id="formCategoria">
-            <input type="text" id="nomeCategoria" placeholder="Nome da Categoria (Ex: Pratos Principais)" required>
-            <button type="submit">Cadastrar Categoria</button>
-        </form>
-    </div>
+        <div class="box">
+            <h2>1. Cadastrar Nova Categoria</h2>
+            <form id="formCategoria">
+                <label>Nome da Categoria:</label>
+                <input type="text" id="nomeCategoria" placeholder="Ex: Pratos Principais, Bebidas, Sobremesas" required>
+                <button type="submit">Salvar Categoria</button>
+            </form>
+        </div>
 
-    <div class="box">
-        <h2>2. Cadastrar Novo Produto</h2>
-        <form id="formProduto">
-            <input type="text" id="nomeProduto" placeholder="Nome do Prato" required>
-            <input type="number" id="precoProduto" step="0.01" placeholder="Preço (Ex: 35.00)" required>
-            <textarea id="descricaoProduto" placeholder="Descrição do prato..."></textarea>
-            
-            <label for="selectCategoria">Categoria:</label>
-            <select id="selectCategoria" required>
-                <option value="">Selecione uma categoria...</option>
-            </select>
-            
-            <button type="submit">Cadastrar Produto</button>
-        </form>
+        <div class="box">
+            <h2>2. Cadastrar Novo Produto</h2>
+            <form id="formProduto">
+                <label>Nome do Prato/Item:</label>
+                <input type="text" id="nomeProduto" placeholder="Ex: Lámen Especial" required>
+                
+                <label>Preço (R$):</label>
+                <input type="number" id="precoProduto" step="0.01" placeholder="Ex: 35.00" required>
+                
+                <label>Descrição:</label>
+                <textarea id="descricaoProduto" rows="3" placeholder="Ingredientes ou detalhes do prato..."></textarea>
+                
+                <label>Categoria:</label>
+                <select id="selectCategoria" required>
+                    <option value="">Carregando categorias...</option>
+                </select>
+                
+                <button type="submit">Salvar Produto no Cardápio</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        // Carrega as categorias existentes no select do produto assim que abre a página
-        async function carregarCategorias() {
+        // Busca as categorias do backend para colocar no campo de seleção
+        async function atualizarCategorias() {
             try {
                 const res = await fetch('/categorias');
                 const categorias = await res.json();
@@ -52,10 +63,10 @@
                 categorias.forEach(cat => {
                     select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`;
                 });
-            } catch (err) { console.error('Erro ao buscar categorias:', err); }
+            } catch (err) { console.error('Erro ao listar categorias:', err); }
         }
 
-        // Enviar Categoria
+        // Salvar Categoria
         document.getElementById('formCategoria').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nome = document.getElementById('nomeCategoria').value;
@@ -65,13 +76,13 @@
                 body: JSON.stringify({ nome })
             });
             if (res.ok) {
-                alert('Categoria cadastrada!');
+                alert('Categoria adicionada com sucesso!');
                 document.getElementById('formCategoria').reset();
-                carregarCategorias();
-            } else { alert('Erro ao cadastrar categoria'); }
+                atualizarCategorias();
+            } else { alert('Falha ao salvar categoria.'); }
         });
 
-        // Enviar Produto
+        // Salvar Produto
         document.getElementById('formProduto').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nome = document.getElementById('nomeProduto').value;
@@ -85,12 +96,13 @@
                 body: JSON.stringify({ nome, preco, descricao, id_categoria_fk })
             });
             if (res.ok) {
-                alert('Produto cadastrado com sucesso!');
+                alert('Prato adicionado ao cardápio!');
                 document.getElementById('formProduto').reset();
-            } else { alert('Erro ao cadastrar produto'); }
+            } else { alert('Falha ao salvar produto.'); }
         });
 
-        carregarCategorias();
+        // Inicia carregando as categorias
+        atualizarCategorias();
     </script>
 </body>
 </html>
