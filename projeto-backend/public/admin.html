@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Baphalmoníacos - Painel Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fdf3f3; color: #333; padding: 20px; }
+        .box { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #b32424; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #248a3d; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1c6b2f; }
+    </style>
+</head>
+<body>
+    <h1>Painel de Controle - Baphalmoníacos 🍜</h1>
+    <a href="index.html" style="color: #b32424; text-decoration: none; font-weight: bold;">← Voltar para o Site</a>
+    <br><br>
+
+    <div class="box">
+        <h2>1. Cadastrar Nova Categoria</h2>
+        <form id="formCategoria">
+            <input type="text" id="nomeCategoria" placeholder="Nome da Categoria (Ex: Pratos Principais)" required>
+            <button type="submit">Cadastrar Categoria</button>
+        </form>
+    </div>
+
+    <div class="box">
+        <h2>2. Cadastrar Novo Produto</h2>
+        <form id="formProduto">
+            <input type="text" id="nomeProduto" placeholder="Nome do Prato" required>
+            <input type="number" id="precoProduto" step="0.01" placeholder="Preço (Ex: 35.00)" required>
+            <textarea id="descricaoProduto" placeholder="Descrição do prato..."></textarea>
+            
+            <label for="selectCategoria">Categoria:</label>
+            <select id="selectCategoria" required>
+                <option value="">Selecione uma categoria...</option>
+            </select>
+            
+            <button type="submit">Cadastrar Produto</button>
+        </form>
+    </div>
+
+    <script>
+        // Carrega as categorias existentes no select do produto assim que abre a página
+        async function carregarCategorias() {
+            try {
+                const res = await fetch('/categorias');
+                const categorias = await res.json();
+                const select = document.getElementById('selectCategoria');
+                select.innerHTML = '<option value="">Selecione uma categoria...</option>';
+                categorias.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`;
+                });
+            } catch (err) { console.error('Erro ao buscar categorias:', err); }
+        }
+
+        // Enviar Categoria
+        document.getElementById('formCategoria').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nomeCategoria').value;
+            const res = await fetch('/categorias', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome })
+            });
+            if (res.ok) {
+                alert('Categoria cadastrada!');
+                document.getElementById('formCategoria').reset();
+                carregarCategorias();
+            } else { alert('Erro ao cadastrar categoria'); }
+        });
+
+        // Enviar Produto
+        document.getElementById('formProduto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nomeProduto').value;
+            const preco = parseFloat(document.getElementById('precoProduto').value);
+            const descricao = document.getElementById('descricaoProduto').value;
+            const id_categoria_fk = parseInt(document.getElementById('selectCategoria').value);
+
+            const res = await fetch('/produtos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, preco, descricao, id_categoria_fk })
+            });
+            if (res.ok) {
+                alert('Produto cadastrado com sucesso!');
+                document.getElementById('formProduto').reset();
+            } else { alert('Erro ao cadastrar produto'); }
+        });
+
+        carregarCategorias();
+    </script>
+</body>
+</html>
