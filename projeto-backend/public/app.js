@@ -1,7 +1,7 @@
 let carrinho = [];
 let produtosDaAPI = [];
 
-// 1. Busca os produtos no Back-end
+// 1. Busca os produtos no Back-end com ajuste automático de imagem
 function carregarCardapio() {
     fetch("/produtos")
         .then(resposta => resposta.json())
@@ -11,14 +11,30 @@ function carregarCardapio() {
             vitrine.innerHTML = "";
 
             dados.forEach(p => {
+                // MÁGICA DA FOTO: Se p.foto estiver vazio, escolhe a imagem certa pelo nome!
+                let imagemFinal = p.foto;
+
+                if (!imagemFinal) {
+                    const nomeMinusculo = p.nome.toLowerCase();
+                    if (nomeMinusculo.includes('tteokbokki')) {
+                        imagemFinal = 'tteokbokki.png';
+                    } else if (nomeMinusculo.includes('buchimgae')) {
+                        imagemFinal = 'buchimgae.png';
+                    } else if (nomeMinusculo.includes('lamen') || nomeMinusculo.includes('lámen')) {
+                        imagemFinal = 'lamen.png';
+                    } else {
+                        imagemFinal = 'lamen.png'; // Foto padrão caso digitem outro nome
+                    }
+                }
+
                 vitrine.innerHTML += `
                     <div class="card">
-                        <img src="${p.foto}" alt="${p.nome}">
+                        <img src="${imagemFinal}" alt="${p.nome}">
                         <h3>${p.nome}</h3>
                         <p style="font-weight: bold; color: var(--vermelho); margin-bottom: 5px;">R$ ${p.preco.toFixed(2)}</p>
                         
                         <p style="font-size: 0.85rem; color: #666; margin: 10px 0; min-height: 40px; line-height: 1.4;">
-                            ${p.descricao}
+                            ${p.descricao || ''}
                         </p>
                         
                         <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id_produto})">Adicionar</button>
