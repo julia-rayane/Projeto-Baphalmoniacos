@@ -14,7 +14,7 @@ export async function obterConexao(): Promise<Database> {
       driver: sqlite3.Database
     });
 
-    // 🚀 CRIA AS TABELAS AUTOMATICAMENTE SE ELAS NÃO EXISTIREM!
+    // 🚀 TABELAS ATUALIZADAS COM A COLUNA FOTO!
     await dbInstance.exec(`
       CREATE TABLE IF NOT EXISTS categorias (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,6 +26,7 @@ export async function obterConexao(): Promise<Database> {
         nome TEXT NOT NULL,
         preco REAL NOT NULL,
         descricao TEXT,
+        foto TEXT,
         id_categoria_fk INTEGER,
         FOREIGN KEY (id_categoria_fk) REFERENCES categorias(id)
       );
