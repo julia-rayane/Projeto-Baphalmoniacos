@@ -1,7 +1,7 @@
 let carrinho = [];
 let produtosDaAPI = [];
 
-// 1. Busca os produtos no Back-end com ajuste automático de imagem e ID seguro
+// 1. Busca os produtos no Back-end alinhado com o banco SQLite
 function carregarCardapio() {
     fetch("/produtos")
         .then(resposta => resposta.json())
@@ -13,9 +13,6 @@ function carregarCardapio() {
             vitrine.innerHTML = "";
 
             dados.forEach(p => {
-                // Identifica o ID correto de forma segura (caso seja p.id ou p.id_produto)
-                const idSeguro = p.id_produto || p.id;
-
                 // MÁGICA DA FOTO: Se p.foto estiver vazio, escolhe a imagem certa pelo nome!
                 let imagemFinal = p.foto;
 
@@ -42,16 +39,16 @@ function carregarCardapio() {
                             ${p.descricao || ''}
                         </p>
                         
-                        <button class="btn btn-vermelho" onclick="addAoCarrinho(${idSeguro})">Adicionar</button>
+                        <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id})">Adicionar</button>
                     </div>`;
             });
         })
         .catch(erro => console.error("Erro ao carregar os dados da API:", erro));
 }
 
-// 2. Adiciona o produto à lista do carrinho buscando por qualquer um dos formatos de ID
+// 2. Adiciona o produto à lista do carrinho buscando pelo ID correto
 window.addAoCarrinho = function(id) {
-    const prato = produtosDaAPI.find(p => (p.id_produto === id || p.id === id));
+    const prato = produtosDaAPI.find(p => p.id === id);
     if (prato) {
         carrinho.push(prato);
         atualizarCarrinho();
