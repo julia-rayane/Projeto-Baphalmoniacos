@@ -1,0 +1,32 @@
+// 1. Configuração do Motor do Prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. Ligação ao seu Banco de Dados SQLite existente
+datasource db {
+  provider = "sqlite"
+  url      = "file:../src/database/baphalmoniacos.db" // Aponta para onde o seu ficheiro .db está guardado
+}
+
+// 3. Tabela de Categorias mapeada para o Prisma
+model Categoria {
+  id       Int       @id @default(autoincrement()) // id como Chave Primária Automática
+  nome     String
+  produtos Produto[] // Indica o relacionamento (Uma categoria tem muitos produtos)
+
+  @@map("categorias") // Garante que o Prisma use a tabela com o nome em minúsculo
+}
+
+// 4. Tabela de Produtos mapeada para o Prisma (Com a coluna foto)
+model Produto {
+  id              Int        @id @default(autoincrement())
+  nome            String
+  preco           Float      // Tipo Float para valores decimais de preço
+  descricao       String?    // A interrogação indica que o campo pode ser opcional/vazio
+  foto            String?    // Coluna da foto como opcional
+  id_categoria_fk Int?       // Chave estrangeira para ligar à categoria
+  categoria       Categoria? @relation(fields: [id_categoria_fk], references: [id], onDelete: Cascade)
+
+  @@map("produtos") // Garante que o Prisma use a tabela com o nome em minúsculo
+}
