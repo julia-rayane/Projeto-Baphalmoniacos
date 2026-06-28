@@ -1,33 +1,32 @@
-import { obterConexao } from '../database/database.js';
-import { ICategoria } from '../types/index.js';
+import prisma from '../database/database.js';
 
-// 1. LISTAR TODAS AS CATEGORIAS
-async function listarTodas(): Promise<ICategoria[]> {
-  const db = await obterConexao();
-  return db.all('SELECT * FROM categorias');
+// 1. CADASTRAR CATEGORIA (CREATE)
+async function create(data: { nome: string }) {
+  return await prisma.categoria.create({
+    data: { nome: data.nome }
+  });
 }
 
-// 2. BUSCAR CATEGORIA POR ID
-async function buscarPorId(id: number): Promise<ICategoria | undefined> {
-  const db = await obterConexao();
-  return db.get('SELECT * FROM categorias WHERE id = ?', [id]);
+// 2. LISTAR CATEGORIAS (READ)
+async function read() {
+  return await prisma.categoria.findMany({
+    include: { produtos: true } // Já traz os produtos vinculados 
+  });
 }
 
-// 3. CRIAR NOVA CATEGORIA
-async function criar(categoria: Omit<ICategoria, 'id'>): Promise<number> {
-  const db = await obterConexao();
-  const resultado = await db.run(
-    'INSERT INTO categorias (nome) VALUES (?)',
-    [categoria.nome]
-  );
-  return resultado.lastID!;
+// 3. ATUALIZAR CATEGORIA (UPDATE)
+async function update(id: number, data: { nome?: string }) {
+  return await prisma.categoria.update({
+    where: { id: id },
+    data: data
+  });
 }
 
-// 4. EXCLUIR CATEGORIA
-async function excluir(id: number): Promise<boolean> {
-  const db = await obterConexao();
-  const resultado = await db.run('DELETE FROM categorias WHERE id = ?', [id]);
-  return (resultado.changes ?? 0) > 0;
+// 4. REMOVER CATEGORIA (DELETE)
+async function remove(id: number) {
+  return await prisma.categoria.delete({
+    where: { id: id }
+  });
 }
 
-export default { listarTodas, buscarPorId, criar, excluir };
+export default { create, read, update, remove };
