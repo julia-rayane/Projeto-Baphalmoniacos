@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import categoriaModel from '../models/categoriaModel.js';
+import categoryModel from '../models/categoriaModels.js';
 
 // LISTAR CATEGORIAS
 async function obterCategorias(req: Request, res: Response, next: NextFunction) {
