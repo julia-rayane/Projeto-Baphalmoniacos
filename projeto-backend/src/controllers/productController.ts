@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import produtoModel from '../models/productModel.js';
+import produtoModel from '../models/produtoModel.js';
 
 // LISTAR OU FILTRAR PRODUTOS
 async function obterProdutos(req: Request, res: Response, next: NextFunction) {
