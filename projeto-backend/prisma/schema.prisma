@@ -6,7 +6,6 @@ generator client {
 // 2. Ligação ao seu Banco de Dados SQLite existente
 datasource db {
   provider = "sqlite"
-  url      = "file:./baphalmoniacos.db"
 }
 
 // 3. Tabela de Categorias mapeada para o Prisma
