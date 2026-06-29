@@ -5,7 +5,6 @@ import produtoModel from '../models/productModel.js';
 async function obterProdutos(req: Request, res: Response, next: NextFunction) {
   try {
     const { nome } = req.query;
-    // Se vier ?nome= na URL, passa o filtro, senão lista tudo
     const produtos = await produtoModel.read(nome ? { nome: String(nome) } : undefined);
     return res.json(produtos);
   } catch (error) {
@@ -16,7 +15,7 @@ async function obterProdutos(req: Request, res: Response, next: NextFunction) {
 // BUSCAR POR ID
 async function obterProdutoPorId(req: Request, res: Response, next: NextFunction) {
   try {
-    const id = Number(req.params.id); // Converte obrigatoriamente para número
+    const id = Number(req.params.id); 
     const produto = await produtoModel.findById(id);
     
     if (!produto) {
