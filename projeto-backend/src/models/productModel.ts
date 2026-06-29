@@ -21,16 +21,17 @@ async function findById(id: number) {
   });
 }
 
-// 3. ADICIONAR UM NOVO PRODUTO (CREATE) - CORRIGIDO PARA O PRISMA
+// 3. ADICIONAR UM NOVO PRODUTO (CREATE) 
 async function create(data: any) {
   return await prisma.produto.create({
     data: {
       nome: data.nome,
-      descricao: data.descricao,
-      preco: Number(data.preco),
-      foto: data.foto,
+      descricao: data.descricao || "Sem descrição",
+      preco: data.preco ? Number(data.preco) : 0.0,
+      // Se data.foto vier vazio ou nulo, ele grava "default.png" automaticamente
+      foto: data.foto || "default.png",
       categoria: {
-        connect: { id: Number(data.id_categoria_fk) }
+        connect: { id: data.id_categoria_fk ? Number(data.id_categoria_fk) : 1 }
       }
     }
   });
