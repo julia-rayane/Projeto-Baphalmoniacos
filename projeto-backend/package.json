@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
-  "scripts": {
+ "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "db:load": "prisma db push && prisma db seed"
+    "db:load": "prisma db push && node src/database/seeds.js"
   },
   "dependencies": {
     "@prisma/client": "^5.16.1",
