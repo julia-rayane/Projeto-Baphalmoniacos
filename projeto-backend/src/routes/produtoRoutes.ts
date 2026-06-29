@@ -1,20 +1,12 @@
 import { Router } from 'express';
-// Importando as funções do controlador de produtos usando o alias @/
-import { 
-  listarProdutos, 
-  buscarProduto, 
-  criarProduto, 
-  atualizarProduto, 
-  removerProduto 
-} from '../controllers/productController.js'; // Usando caminho relativo e .js
+import productController from '../controllers/productController.js';
 
 const router = Router();
 
-// Vinculando cada rota ao seu respectivo método do controller
-router.get('/', listarProdutos);
-router.get('/:id', buscarProduto);
-router.post('/', criarProduto);
-router.put('/:id', atualizarProduto);
-router.delete('/:id', removerProduto);
+// Vinculando cada rota ao método do controller 
+router.get('/', productController.obterProdutos || productController.listarProdutos);
+router.post('/', productController.criarProduto);
+router.put('/:id', productController.atualizarProduto);
+router.delete('/:id', productController.deletarProduto || productController.removerProduto);
 
 export default router;
