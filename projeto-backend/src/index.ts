@@ -8,9 +8,9 @@ import { fileURLToPath } from 'url';
 import { exigirJson } from './middlewares/jsonValidation.js';
 import { manipuladorDeErros } from './middlewares/errorHandler.js';
 
-// Importando os roteadores em TypeScript
+// Importando os roteadores em TypeScript (Corrigido para português!)
 import produtoRoutes from './routes/produtoRoutes.js';
-import categoriaRoutes from './routes/categoriaRoutes.js'; // 👈 Adicionado aqui!
+import categoriaRoutes from './routes/categoriaRoutes.js'; 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Ativando as rotas do sistema
 app.use('/produtos', produtoRoutes);
-app.use('/categorias', categoriaRoutes); // 👈 Adicionado aqui!
+app.use('/categorias', categoriaRoutes); 
 
 // 🚨 Middleware centralizado para tratamento de erros
 app.use(manipuladorDeErros);
