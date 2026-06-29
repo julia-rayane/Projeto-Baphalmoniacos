@@ -25,7 +25,7 @@ async function main() {
       nome: 'Tteokbokki',
       descricao: 'Bolinhos de arroz macios e mastigáveis cozidos em um molho de pimenta gochujang doce e picante com fatias de bolo de peixe.',
       preco: 32.00,
-      foto: 'Tteokbokki.png',
+      foto: 'tteokbokki.png',
       categoria: {
         connect: { id: 1 }
       }
@@ -37,7 +37,7 @@ async function main() {
       nome: 'Buchimgae',
       descricao: 'Panqueca coreana frita na chapa, crocante por fora e macia por dentro, recheada com vegetais frescos e cebolinha.',
       preco: 28.50,
-      foto: 'Buchimgae.png',
+      foto: 'buchimgae.png',
       categoria: {
         connect: { id: 1 }
       }
