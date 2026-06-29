@@ -3,57 +3,69 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Limpa os dados existentes para não duplicar se rodar duas vezes
+  console.log('🌱 Iniciando alimentação do banco de dados...');
+
+  // 1. Limpa o banco para não duplicar dados
   await prisma.produto.deleteMany({});
   await prisma.categoria.deleteMany({});
 
-  // 1. Cria as categorias obrigatórias
-  const principal = await prisma.categoria.create({
-    data: { id: 1, nome: 'Prato Principal' }
+  // 2. Cria APENAS a categoria de Prato Principal (sem bebidas)
+  const categoriaPrincipal = await prisma.categoria.create({
+    data: {
+      id: 1,
+      nome: 'Prato Principal',
+    },
   });
 
-  const Entrada = await prisma.categoria.create({
-    data: { id: 2, nome: 'Entrada' }
-  });
+  console.log('✅ Categoria base criada com sucesso!');
 
-  // 2. Cria os produtos iniciais (Baphalmoníacos)
-  await prisma.produto.createMany({
-    data: [
-      {
-        id: 1,
-        nome: 'Lámen Tradicional',
-        descricao: 'Macarrão coreano com caldo artesanal e acompanhamentos.',
-        preco: 35.00,
-        foto: 'lámen.png',
-        id_categoria_fk: principal.id
-      },
-      {
-        id: 2,
-        nome: 'Tteokbokki',
-        descricao: 'Bolinhos de arroz macios em molho picante e adocicado.',
-        preco: 28.00,
-        foto: 'tteokbokki.png',
-        id_categoria_fk: principal.id
-      },
-      {
-        id: 3,
-        nome: 'Buchimgae',
-        descricao: 'Panqueca coreana com legumes fritos',
-        preco: 22.50,
-        foto: 'buchimgae.png',
-        id_categoria_fk: entrada.id
+  // 3. Adiciona os produtos iniciais (incluindo o Lámen Especial!)
+  await prisma.produto.create({
+    data: {
+      nome: 'Tteokbokki',
+      descricao: 'Bolinhos de arroz macios e mastigáveis cozidos em um molho de pimenta gochujang doce e picante com fatias de bolo de peixe.',
+      preco: 32.00,
+      foto: 'Tteokbokki.png',
+      categoria: {
+        connect: { id: 1 }
       }
-    ]
+    },
   });
 
-  console.log('🌱 Banco de dados alimentado com sucesso pelo Prisma Seed!');
+  await prisma.produto.create({
+    data: {
+      nome: 'Buchimgae',
+      descricao: 'Panqueca coreana frita na chapa, crocante por fora e macia por dentro, recheada com vegetais frescos e cebolinha.',
+      preco: 28.50,
+      foto: 'Buchimgae.png',
+      categoria: {
+        connect: { id: 1 }
+      }
+    },
+  });
+
+  await prisma.produto.create({
+    data: {
+      nome: 'Lámen Especial',
+      descricao: 'Macarrão artesanal servido em caldo aromático ultra saboroso, acompanhado de fatias de carne macia, ovo marinado perfeitamente cozido e cebolinha fresca.',
+      preco: 35.00,
+      foto: 'lamen.png', // Garanta que tem uma foto chamada lamen.png na pasta public
+      categoria: {
+        connect: { id: 1 }
+      }
+    },
+  });
+
+  console.log('✅ Produtos iniciais semeados com sucesso!');
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+    console.log('🏁 Processo de Seed finalizado com sucesso absoluto!');
+  })
+  .catch(async (e) => {
+    console.error('❌ Erro durante o seed:', e);
+    await prisma.$disconnect();
+    process.exit(1);
   });
