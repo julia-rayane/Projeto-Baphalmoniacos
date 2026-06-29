@@ -1,56 +1,24 @@
-import prisma from '../database/database.js';
-
-// 1. LISTAR PRODUTOS (Com o filtro "contains")
-async function read(where?: { nome?: string }) {
-  if (where?.nome) {
-    return await prisma.Produto.findMany({ 
-      where: {
-        nome: {
-          contains: where.nome
-        }
-      }
-    });
-  }
-  return await prisma.Produto.findMany(); 
+generator client {
+  provider = "prisma-client-js"
 }
 
-// 2. BUSCAR PRODUTO POR ID
-async function findById(id: number) {
-  return await prisma.Produto.findUnique({ 
-    where: { id: id }
-  });
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
-// 3. ADICIONAR UM NOVO PRODUTO (CREATE)
-async function create(data: any) {
-  return await prisma.Produto.create({
-    data: {
-      nome: data.nome,
-      descricao: data.descricao,
-      preco: Number(data.preco), 
-      foto: data.foto,
-      id_categoria_fk: data.id_categoria_fk ? Number(data.id_categoria_fk) : null 
-    }
-  });
+model Categoria {
+  id       Int       @id @default(autoincrement())
+  nome     String
+  produtos Produto[]
 }
 
-// 4. ATUALIZAR UM PRODUTO (UPDATE)
-async function update(id: number, data: any) {
-  return await prisma.Produto.update({ 
-    where: { id: id },
-    data: {
-      ...data,
-      preco: data.preco ? Number(data.preco) : undefined,
-      id_categoria_fk: data.id_categoria_fk ? Number(data.id_categoria_fk) : undefined
-    }
-  });
+model Produto {
+  id              Int       @id @default(autoincrement())
+  nome            String
+  descricao       String
+  preco           Float
+  foto            String
+  id_categoria_fk Int
+  categoria       Categoria @relation(fields: [id_categoria_fk], references: [id])
 }
-
-// 5. REMOVER UM PRODUTO (DELETE)
-async function remove(id: number) {
-  return await prisma.Produto.delete({ 
-    where: { id: id }
-  });
-}
-
-export default { read, findById, create, update, remove };
