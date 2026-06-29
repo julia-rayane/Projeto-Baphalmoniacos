@@ -21,28 +21,39 @@ async function findById(id: number) {
   });
 }
 
-// 3. ADICIONAR UM NOVO PRODUTO (CREATE)
+// 3. ADICIONAR UM NOVO PRODUTO (CREATE) - CORRIGIDO PARA O PRISMA
 async function create(data: any) {
   return await prisma.produto.create({
     data: {
       nome: data.nome,
       descricao: data.descricao,
-      preco: Number(data.preco), // O Prisma exige a conversão exata para número flutuante
+      preco: Number(data.preco),
       foto: data.foto,
-      id_categoria_fk: data.id_categoria_fk ? Number(data.id_categoria_fk) : null // Converte para número inteiro
+      categoria: {
+        connect: { id: Number(data.id_categoria_fk) }
+      }
     }
   });
 }
 
-// 4. ATUALIZAR UM PRODUTO (UPDATE)
+// 4. ATUALIZAR UM PRODUTO (UPDATE) - CORRIGIDO PARA O PRISMA
 async function update(id: number, data: any) {
+  const updateData: any = {
+    nome: data.nome,
+    descricao: data.descricao,
+    preco: data.preco ? Number(data.preco) : undefined,
+    foto: data.foto,
+  };
+
+  if (data.id_categoria_fk) {
+    updateData.categoria = {
+      connect: { id: Number(data.id_categoria_fk) }
+    };
+  }
+
   return await prisma.produto.update({
     where: { id: id },
-    data: {
-      ...data,
-      preco: data.preco ? Number(data.preco) : undefined,
-      id_categoria_fk: data.id_categoria_fk ? Number(data.id_categoria_fk) : undefined
-    }
+    data: updateData
   });
 }
 
