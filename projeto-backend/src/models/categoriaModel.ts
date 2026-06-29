@@ -16,7 +16,7 @@ async function read() {
 
 // 3. ATUALIZAR CATEGORIA (UPDATE)
 async function update(id: number, data: { nome?: string }) {
-  return await prisma.Categoria.update({
+  return await prisma.Categoria.update({ 
     where: { id: id },
     data: data
   });
@@ -29,4 +29,4 @@ async function remove(id: number) {
   });
 }
 
-export default { create, read, update, remove };;
+export default { create, read, update, remove };
