@@ -1,31 +1,56 @@
-// 1. Configuração do Motor do Prisma
-generator client {
-  provider = "prisma-client-js"
+import prisma from '../database/database.js';
+
+// 1. LISTAR PRODUTOS (Com o filtro "contains")
+async function read(where?: { nome?: string }) {
+  if (where?.nome) {
+    return await prisma.Produto.findMany({ 
+      where: {
+        nome: {
+          contains: where.nome
+        }
+      }
+    });
+  }
+  return await prisma.Produto.findMany(); 
 }
 
-// 2. Ligação ao seu Banco de Dados SQLite existente
-datasource db {
-  provider = "sqlite"
+// 2. BUSCAR PRODUTO POR ID
+async function findById(id: number) {
+  return await prisma.Produto.findUnique({ 
+    where: { id: id }
+  });
 }
 
-// 3. Tabela de Categorias mapeada para o Prisma
-model Categoria {
-  id       Int       @id @default(autoincrement()) // id como Chave Primária Automática
-  nome     String
-  produtos Produto[] // Indica o relacionamento (Uma categoria tem muitos produtos)
-
-  @@map("categorias") // Garante que o Prisma use a tabela com o nome em minúsculo
+// 3. ADICIONAR UM NOVO PRODUTO (CREATE)
+async function create(data: any) {
+  return await prisma.Produto.create({
+    data: {
+      nome: data.nome,
+      descricao: data.descricao,
+      preco: Number(data.preco), 
+      foto: data.foto,
+      id_categoria_fk: data.id_categoria_fk ? Number(data.id_categoria_fk) : null 
+    }
+  });
 }
 
-// 4. Tabela de Produtos mapeada para o Prisma (Com a coluna foto)
-model Produto {
-  id              Int        @id @default(autoincrement())
-  nome            String
-  preco           Float      // Tipo Float para valores decimais de preço
-  descricao       String?    // A interrogação indica que o campo pode ser opcional/vazio
-  foto            String?    // Coluna da foto como opcional
-  id_categoria_fk Int?       // Chave estrangeira para ligar à categoria
-  categoria       Categoria? @relation(fields: [id_categoria_fk], references: [id], onDelete: Cascade)
-
-  @@map("produtos") // Garante que o Prisma use a tabela com o nome em minúsculo
+// 4. ATUALIZAR UM PRODUTO (UPDATE)
+async function update(id: number, data: any) {
+  return await prisma.Produto.update({ 
+    where: { id: id },
+    data: {
+      ...data,
+      preco: data.preco ? Number(data.preco) : undefined,
+      id_categoria_fk: data.id_categoria_fk ? Number(data.id_categoria_fk) : undefined
+    }
+  });
 }
+
+// 5. REMOVER UM PRODUTO (DELETE)
+async function remove(id: number) {
+  return await prisma.Produto.delete({ 
+    where: { id: id }
+  });
+}
+
+export default { read, findById, create, update, remove };
