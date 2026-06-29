@@ -9,7 +9,7 @@ async function main() {
   await prisma.produto.deleteMany({});
   await prisma.categoria.deleteMany({});
 
-  // 2. Cria APENAS a categoria de Prato Principal (sem bebidas)
+  // 2. Cria APENAS a categoria de Prato Principal 
   const categoriaPrincipal = await prisma.categoria.create({
     data: {
       id: 1,
@@ -19,7 +19,7 @@ async function main() {
 
   console.log('✅ Categoria base criada com sucesso!');
 
-  // 3. Adiciona os produtos iniciais (incluindo o Lámen Especial!)
+  // 3. Adiciona os produtos iniciais
   await prisma.produto.create({
     data: {
       nome: 'Tteokbokki',
@@ -49,7 +49,7 @@ async function main() {
       nome: 'Lámen Especial',
       descricao: 'Macarrão artesanal servido em caldo aromático ultra saboroso, acompanhado de fatias de carne macia, ovo marinado perfeitamente cozido e cebolinha fresca.',
       preco: 35.00,
-      foto: 'lamen.png', // Garanta que tem uma foto chamada lamen.png na pasta public
+      foto: 'lámen.png', 
       categoria: {
         connect: { id: 1 }
       }
