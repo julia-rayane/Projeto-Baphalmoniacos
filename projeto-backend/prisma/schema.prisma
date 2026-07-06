@@ -15,7 +15,7 @@ model Categoria {
 
 model Produto {
   id              Int       @id @default(autoincrement())
-  nome            String
+  nome            String    @unique
   descricao       String
   preco           Float
   foto            String
