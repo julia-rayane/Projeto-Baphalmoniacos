@@ -67,19 +67,19 @@
 </head>
 <body>
 
- <header>
-    <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
-    <nav>
-        <ul class="nav-links" style="display: flex; align-items: center;">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#sobre">Nossa História</a></li>
-            <li><a href="#login">Entrar</a></li>
-            <li><a href="#cardapio">Cardápio</a></li>
-            <li><a href="#pedido">Meu Carrinho</a></li>
-            <li><a href="admin.html" target="_blank" style="background: var(--verde); padding: 8px 15px; border-radius: 8px; margin-left: 10px; color: white; text-decoration: none;">Cadastrar Pratos</a></li>
-        </ul>
-    </nav>
-</header>
+    <header>
+        <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
+        <nav>
+            <ul class="nav-links" style="display: flex; align-items: center;">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#sobre">Nossa História</a></li>
+                <li><a href="#login">Entrar</a></li>
+                <li><a href="#cardapio">Cardápio</a></li>
+                <li><a href="#pedido">Meu Carrinho</a></li>
+                <li><a href="admin.html" target="_blank" style="background: var(--verde); padding: 8px 15px; border-radius: 8px; margin-left: 10px; color: white; text-decoration: none;">Cadastrar Pratos</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <section id="home" class="hero" style="padding: 0;">
         <div>
@@ -95,22 +95,28 @@
         </div>
     </section>
 
+    <!-- ÁREA DO CLIENTE - INTEGRADA AO BACKEND -->
     <section id="login" style="background-color: #fdf2f2;">
         <h2>Área do Cliente</h2>
         <div class="auth-container">
+            <!-- 1. LOGIN -->
             <div class="auth-box">
                 <h3>Acessar à conta</h3>
-                <input type="email" id="l-email" placeholder="Seu e-mail">
-                <input type="password" placeholder="Sua senha">
-                <button class="btn btn-vermelho" onclick="alert('Bem-vindo!')">Entrar</button>
+                <form id="formLoginIndex">
+                    <input type="email" id="l-email" placeholder="Seu e-mail" required>
+                    <input type="password" id="l-senha" placeholder="Sua senha" required>
+                    <button type="submit" class="btn btn-vermelho">Entrar</button>
+                </form>
             </div>
+            <!-- 2. CADASTRO -->
             <div class="auth-box">
                 <h3>Criar nova conta</h3>
-                <input type="text" id="c-nome" placeholder="Nome Completo">
-                <input type="text" id="c-end" placeholder="Morada / Endereço Completo">
-                <input type="email" placeholder="E-mail">
-                <input type="password" placeholder="Criar Senha">
-                <button class="btn btn-verde" onclick="validarCadastro()">Finalizar Registo</button>
+                <form id="formCadastroIndex">
+                    <input type="text" id="c-nome" placeholder="Nome Completo" required>
+                    <input type="email" id="c-email" placeholder="Seu e-mail" required>
+                    <input type="password" id="c-senha" placeholder="Criar Senha" required>
+                    <button type="submit" class="btn btn-verde">Finalizar Registo</button>
+                </form>
             </div>
         </div>
     </section>
@@ -144,7 +150,65 @@
         <p>&copy; 2026 Baphalmoniácos | Júlia Rayane e Maria Isabely | IFPB</p>
     </footer>
 
+    <!-- SCRIPT DA VITRINE E CARRINHO -->
     <script src="app.js"></script>
+
+    <!-- SCRIPT DE AUTENTICAÇÃO (LOGIN/SIGNUP) -->
+    <script>
+        // LÓGICA DE LOGIN (SIGNIN)
+        document.getElementById('formLoginIndex').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('l-email').value;
+            const senha = document.getElementById('l-senha').value;
+
+            try {
+                const res = await fetch('/signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const dados = await res.json();
+
+                if (res.ok && dados.token) {
+                    localStorage.setItem('token', dados.token);
+                    alert('Login realizado com sucesso! Redirecionando para a área administrativa...');
+                    window.location.href = 'admin.html';
+                } else {
+                    alert(dados.error || 'E-mail ou senha incorretos.');
+                }
+            } catch (err) {
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+
+        // LÓGICA DE CADASTRO (SIGNUP)
+        document.getElementById('formCadastroIndex').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('c-nome').value;
+            const email = document.getElementById('c-email').value;
+            const senha = document.getElementById('c-senha').value;
+
+            try {
+                const res = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+
+                const dados = await res.json();
+
+                if (res.ok) {
+                    alert('Conta criada com sucesso! Faça o login no formulário ao lado.');
+                    document.getElementById('formCadastroIndex').reset();
+                } else {
+                    alert(dados.error || 'Erro ao realizar cadastro.');
+                }
+            } catch (err) {
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+    </script>
 
 </body>
 </html>
