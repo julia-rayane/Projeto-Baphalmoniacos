@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ###
 
-### 2. REALIZAR LOGIN (SIGNIN)
+### 2. REALIZAR LOGIN VÁLIDO (SIGNIN)
 # @name login
 POST {{baseUrl}}/signin
 Content-Type: application/json
@@ -28,19 +28,30 @@ Content-Type: application/json
 
 ###
 
-### 3. LISTAR TODOS OS PRODUTOS (ROTA PÚBLICA)
+### 3. TENTAR LOGIN COM SENHA INCORRETA (DEVE RETORNAR ERRO 400/401)
+POST {{baseUrl}}/signin
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "senha": "senha_errada_123"
+}
+
+###
+
+### 4. LISTAR TODOS OS PRODUTOS (ROTA PÚBLICA)
 GET {{baseUrl}}/produtos
 Content-Type: application/json
 
 ###
 
-### 4. BUSCAR PRODUTO POR ID (ROTA PÚBLICA)
+### 5. BUSCAR PRODUTO POR ID (ROTA PÚBLICA)
 GET {{baseUrl}}/produtos/1
 Content-Type: application/json
 
 ###
 
-### 5. TENTAR CRIAR PRODUTO SEM TOKEN (DEVE RETORNAR ERRO 401 UNAUTHORIZED)
+### 6. TENTAR CRIAR PRODUTO SEM TOKEN (DEVE RETORNAR ERRO 401 UNAUTHORIZED)
 POST {{baseUrl}}/produtos
 Content-Type: application/json
 
@@ -54,7 +65,7 @@ Content-Type: application/json
 
 ###
 
-### 6. CRIAR PRODUTO COM TOKEN (ROTA PROTEGIDA - SUCESSO)
+### 7. CRIAR PRODUTO COM TOKEN (ROTA PROTEGIDA - SUCESSO)
 POST {{baseUrl}}/produtos
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
@@ -69,7 +80,7 @@ Content-Type: application/json
 
 ###
 
-### 7. ATUALIZAR PRODUTO COM TOKEN (ROTA PROTEGIDA)
+### 8. ATUALIZAR PRODUTO COM TOKEN (ROTA PROTEGIDA)
 PUT {{baseUrl}}/produtos/3
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
@@ -84,7 +95,7 @@ Content-Type: application/json
 
 ###
 
-### 8. REMOVER PRODUTO COM TOKEN (ROTA PROTEGIDA)
+### 9. REMOVER PRODUTO COM TOKEN (ROTA PROTEGIDA)
 DELETE {{baseUrl}}/produtos/1
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
