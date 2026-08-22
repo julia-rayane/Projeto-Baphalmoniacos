@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Baphalmoníacos - Login / Cadastro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdf3f3; color: #333; padding: 20px; }
+        .container { max-width: 450px; margin: 40px auto; }
+        .box { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { color: #b32424; margin-top: 0; border-bottom: 2px solid #fde1e1; padding-bottom: 8px; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+        input { width: 100%; padding: 10px; margin: 6px 0 15px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { background: #248a3d; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background: #1c6b2f; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #b32424; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Voltar para o Site principal</a>
+
+        <!-- 1. FORMULÁRIO DE LOGIN -->
+        <div class="box">
+            <h2>1. Acessar Conta (Signin)</h2>
+            <form id="formSignin">
+                <label>E-mail:</label>
+                <input type="email" id="emailSignin" placeholder="seu@email.com" required>
+                
+                <label>Senha:</label>
+                <input type="password" id="senhaSignin" placeholder="Sua senha" required>
+                
+                <button type="submit">Entrar no Painel</button>
+            </form>
+        </div>
+
+        <!-- 2. FORMULÁRIO DE CRIAR CONTA -->
+        <div class="box">
+            <h2>2. Criar Nova Conta (Signup)</h2>
+            <form id="formSignup">
+                <label>Nome:</label>
+                <input type="text" id="nomeSignup" placeholder="Seu nome completo" required>
+
+                <label>E-mail:</label>
+                <input type="email" id="emailSignup" placeholder="seu@email.com" required>
+                
+                <label>Senha:</label>
+                <input type="password" id="senhaSignup" placeholder="Crie uma senha" required>
+                
+                <button type="submit">Cadastrar Usuário</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. FAZER LOGIN (SIGNIN) ---
+        document.getElementById('formSignin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailSignin').value;
+            const senha = document.getElementById('senhaSignin').value;
+
+            try {
+                const res = await fetch('/signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const dados = await res.json();
+
+                if (res.ok && dados.token) {
+                    // 💾 Salva o Token JWT no navegador
+                    localStorage.setItem('token', dados.token);
+                    alert('Login realizado com sucesso! Redirecionando para a Administração...');
+                    window.location.href = '/admin.html';
+                } else {
+                    alert(dados.error || 'E-mail ou senha incorretos.');
+                }
+            } catch (err) {
+                console.error('Erro ao fazer login:', err);
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+
+        // --- 2. CRIAR CONTA (SIGNUP) ---
+        document.getElementById('formSignup').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nomeSignup').value;
+            const email = document.getElementById('emailSignup').value;
+            const senha = document.getElementById('senhaSignup').value;
+
+            try {
+                const res = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+
+                const dados = await res.json();
+
+                if (res.ok) {
+                    alert('Usuário cadastrado com sucesso! Agora faça o login no formulário acima.');
+                    document.getElementById('formSignup').reset();
+                } else {
+                    alert(dados.error || 'Erro ao realizar cadastro.');
+                }
+            } catch (err) {
+                console.error('Erro ao cadastrar:', err);
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+    </script>
+</body>
+</html>
