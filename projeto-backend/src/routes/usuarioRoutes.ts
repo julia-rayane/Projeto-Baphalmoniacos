@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { cadastrar, login } from '../controllers/usuarioController';
+import { cadastrar, login } from '../controllers/usuarioController.js'; 
 
 const usuarioRoutes = Router();
 
-// Rotas públicas de autenticação
 usuarioRoutes.post('/signup', cadastrar);
 usuarioRoutes.post('/signin', login);
 
