@@ -53,7 +53,18 @@
     </div>
 
     <script>
-        // Busca as categorias do backend para colocar no campo de seleção
+        // Busca o token salvo no navegador e valida o acesso
+        function obterToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Você precisa estar logado para acessar o painel administrativo!');
+                window.location.href = '/cadastro.html';
+                return null;
+            }
+            return token;
+        }
+
+        // Busca as categorias do backend (Rota Pública)
         async function atualizarCategorias() {
             try {
                 const res = await fetch('/categorias');
@@ -63,28 +74,45 @@
                 categorias.forEach(cat => {
                     select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`;
                 });
-            } catch (err) { console.error('Erro ao listar categorias:', err); }
+            } catch (err) { 
+                console.error('Erro ao listar categorias:', err); 
+            }
         }
 
-        // Salvar Categoria
+        // Cadastrar Categoria (Rota Protegida 🔒)
         document.getElementById('formCategoria').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const token = obterToken();
+            if (!token) return;
+
             const nome = document.getElementById('nomeCategoria').value;
             const res = await fetch('/categorias', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ nome })
             });
+
             if (res.ok) {
                 alert('Categoria adicionada com sucesso!');
                 document.getElementById('formCategoria').reset();
                 atualizarCategorias();
-            } else { alert('Falha ao salvar categoria.'); }
+            } else if (res.status === 401) {
+                alert('Sessão expirada. Faça login novamente.');
+                window.location.href = '/cadastro.html';
+            } else { 
+                alert('Falha ao salvar categoria.'); 
+            }
         });
 
-        // Salvar Produto
+        // Cadastrar Produto (Rota Protegida 🔒)
         document.getElementById('formProduto').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const token = obterToken();
+            if (!token) return;
+
             const nome = document.getElementById('nomeProduto').value;
             const preco = parseFloat(document.getElementById('precoProduto').value);
             const descricao = document.getElementById('descricaoProduto').value;
@@ -92,16 +120,25 @@
 
             const res = await fetch('/produtos', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ nome, preco, descricao, id_categoria_fk })
             });
+
             if (res.ok) {
                 alert('Prato adicionado ao cardápio!');
                 document.getElementById('formProduto').reset();
-            } else { alert('Falha ao salvar produto.'); }
+            } else if (res.status === 401) {
+                alert('Sessão expirada. Faça login novamente.');
+                window.location.href = '/cadastro.html';
+            } else { 
+                alert('Falha ao salvar produto.'); 
+            }
         });
 
-        // Inicia carregando as categorias
+        // Executa ao carregar a página
         atualizarCategorias();
     </script>
 </body>
