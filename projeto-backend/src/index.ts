@@ -8,9 +8,10 @@ import { fileURLToPath } from 'url';
 import { exigirJson } from './middlewares/jsonValidation.js';
 import { manipuladorDeErros } from './middlewares/errorHandler.js';
 
-// Importando os roteadores em TypeScript (Corrigido para português!)
+// Importando os roteadores em TypeScript
 import produtoRoutes from './routes/produtoRoutes.js';
 import categoriaRoutes from './routes/categoriaRoutes.js'; 
+import usuarioRoutes from './routes/usuarioRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -20,7 +21,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// 🛡️ Middleware para exigir Content-Type: application/json em POST e PUT
+// Middleware para exigir Content-Type: application/json em POST e PUT
 //app.use(exigirJson);
 
 app.use(express.static(path.join(__dirname, '../public')));
@@ -28,8 +29,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Ativando as rotas do sistema
 app.use('/produtos', produtoRoutes);
 app.use('/categorias', categoriaRoutes); 
+app.use(usuarioRoutes); //(Disponibiliza /signup e /signin)
 
-// 🚨 Middleware centralizado para tratamento de erros
+// Middleware centralizado para tratamento de erros
 app.use(manipuladorDeErros);
 
 app.listen(PORT, () => {
