@@ -1,26 +1,62 @@
 ### Configuração da URL Base
 @baseUrl = http://localhost:3000
 
-### 1. LISTAR TODOS OS PRODUTOS (READ)
+### 1. CADASTRAR NOVO USUÁRIO (SIGNUP)
+POST {{baseUrl}}/signup
+Content-Type: application/json
+
+{
+  "nome": "Usuário Teste",
+  "email": "teste@email.com",
+  "senha": "senha123"
+}
+
+###
+
+### 2. REALIZAR LOGIN (SIGNIN)
+# @name login
+POST {{baseUrl}}/signin
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "senha": "senha123"
+}
+
+### Captura automaticamente o token retornado pelo login
+@authToken = {{login.response.body.token}}
+
+###
+
+### 3. LISTAR TODOS OS PRODUTOS (ROTA PÚBLICA)
 GET {{baseUrl}}/produtos
 Content-Type: application/json
 
 ###
 
-### 2. BUSCAR PRODUTO POR ID ESPECÍFICO (READ)
+### 4. BUSCAR PRODUTO POR ID (ROTA PÚBLICA)
 GET {{baseUrl}}/produtos/1
 Content-Type: application/json
 
 ###
 
-### 3. TESTAR ERRO 404 - BUSCAR ID QUE NÃO EXISTE
-GET {{baseUrl}}/produtos/999
+### 5. TENTAR CRIAR PRODUTO SEM TOKEN (DEVE RETORNAR ERRO 401 UNAUTHORIZED)
+POST {{baseUrl}}/produtos
 Content-Type: application/json
+
+{
+  "nome": "Jjajangmyeon Sem Token",
+  "descricao": "Macarrão com molho de soja preta espesso",
+  "preco": 32.00,
+  "foto": "buchimgae.png",
+  "id_categoria_fk": 1
+}
 
 ###
 
-### 4. ADICIONAR UM NOVO PRODUTO (CREATE)
+### 6. CRIAR PRODUTO COM TOKEN (ROTA PROTEGIDA - SUCESSO)
 POST {{baseUrl}}/produtos
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -33,19 +69,9 @@ Content-Type: application/json
 
 ###
 
-### 5. TESTAR ERRO 400 - TENTAR CRIAR SEM CAMPOS OBRIGATÓRIOS (VALIDAÇÃO)
-POST {{baseUrl}}/produtos
-Content-Type: application/json
-
-{
-  "nome": "Prato Incompleto",
-  "preco": 20.00
-}
-
-###
-
-### 6. ATUALIZAR UM PRODUTO EXISTENTE (UPDATE)
+### 7. ATUALIZAR PRODUTO COM TOKEN (ROTA PROTEGIDA)
 PUT {{baseUrl}}/produtos/3
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -58,6 +84,7 @@ Content-Type: application/json
 
 ###
 
-### 7. REMOVER UM PRODUTO (DELETE)
+### 8. REMOVER PRODUTO COM TOKEN (ROTA PROTEGIDA)
 DELETE {{baseUrl}}/produtos/1
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
