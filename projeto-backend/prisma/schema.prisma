@@ -22,3 +22,11 @@ model Produto {
   id_categoria_fk Int
   categoria       Categoria @relation(fields: [id_categoria_fk], references: [id])
 }
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  criadoEm  DateTime @default(now())
+}
