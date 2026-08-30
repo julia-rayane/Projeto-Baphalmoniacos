@@ -76,7 +76,6 @@
                 <li><a href="#login">Entrar</a></li>
                 <li><a href="#cardapio">Cardápio</a></li>
                 <li><a href="#pedido">Meu Carrinho</a></li>
-                <li><a href="admin.html" target="_blank" style="background: var(--verde); padding: 8px 15px; border-radius: 8px; margin-left: 10px; color: white; text-decoration: none;">Cadastrar Pratos</a></li>
             </ul>
         </nav>
     </header>
@@ -148,6 +147,7 @@
 
     <footer>
         <p>&copy; 2026 Baphalmoniácos | Júlia Rayane e Maria Isabely | IFPB</p>
+        <p style="margin-top: 10px;"><a href="login.html" style="color: #999; font-size: 0.85rem;">Acesso administrativo</a></p>
     </footer>
 
     <!-- SCRIPT DA VITRINE E CARRINHO -->
@@ -172,8 +172,9 @@
 
                 if (res.ok && dados.token) {
                     localStorage.setItem('token', dados.token);
-                    alert('Login realizado com sucesso! Redirecionando para a área administrativa...');
-                    window.location.href = 'admin.html';
+                    localStorage.setItem('role', dados.usuario.role);
+                    alert(`Login realizado com sucesso! Bem-vindo(a), ${dados.usuario.nome}.`);
+                    document.getElementById('formLoginIndex').reset();
                 } else {
                     alert(dados.error || 'E-mail ou senha incorretos.');
                 }
