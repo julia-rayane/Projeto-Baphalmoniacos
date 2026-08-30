@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,19 @@ async function main() {
   // 1. Limpa o banco para não duplicar dados
   await prisma.produto.deleteMany({});
   await prisma.categoria.deleteMany({});
+  await prisma.usuario.deleteMany({});
+
+  // 1.1 Cria o usuário admin inicial (único jeito de existir um admin no sistema)
+  const senhaAdminHash = await bcrypt.hash('admin123', 10);
+  await prisma.usuario.create({
+    data: {
+      nome: 'Administrador',
+      email: 'admin@baphalmoniacos.com',
+      senha: senhaAdminHash,
+      role: 'admin',
+    },
+  });
+  console.log('✅ Usuário admin criado! Login: admin@baphalmoniacos.com | Senha: admin123');
 
   // 2. Cria APENAS a categoria de Prato Principal 
   const categoriaPrincipal = await prisma.categoria.create({
