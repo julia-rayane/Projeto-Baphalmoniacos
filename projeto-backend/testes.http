@@ -99,3 +99,46 @@ Content-Type: application/json
 DELETE {{baseUrl}}/produtos/1
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
+
+### 10. LOGIN COMO ADMIN (usuário criado pelo seed)
+# @name loginAdmin
+POST {{baseUrl}}/signin
+Content-Type: application/json
+
+{
+  "email": "admin@baphalmoniacos.com",
+  "senha": "admin123"
+}
+
+### Captura automaticamente o token do admin
+@authTokenAdmin = {{loginAdmin.response.body.token}}
+
+###
+
+### 11. CRIAR PRODUTO COMO CLIENTE (DEVE RETORNAR ERRO 403 - SÓ ADMIN PODE)
+POST {{baseUrl}}/produtos
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nome": "Produto Não Autorizado",
+  "descricao": "Um cliente não pode cadastrar produto",
+  "preco": 10.00,
+  "foto": "teste.png",
+  "id_categoria_fk": 1
+}
+
+###
+
+### 12. CRIAR PRODUTO COMO ADMIN (DEVE FUNCIONAR)
+POST {{baseUrl}}/produtos
+Authorization: Bearer {{authTokenAdmin}}
+Content-Type: application/json
+
+{
+  "nome": "Produto Autorizado",
+  "descricao": "Um admin pode cadastrar produto",
+  "preco": 25.00,
+  "foto": "teste.png",
+  "id_categoria_fk": 1
+}
