@@ -6,6 +6,7 @@ const SEGREDO_JWT = process.env.JWT_SECRET || 'secreta_super_segura';
 interface PayloadToken {
   id: number;
   email: string;
+  role: string;
   iat: number;
   exp: number;
 }
@@ -32,8 +33,9 @@ export function autenticacaoMiddleware(req: Request, res: Response, next: NextFu
   try {
     const dadosDecodificados = jwt.verify(token, SEGREDO_JWT) as PayloadToken;
     
-    // Anexa o ID do usuário à requisição
+    // Anexa o ID e o tipo (role) do usuário à requisição
     (req as any).usuarioId = dadosDecodificados.id;
+    (req as any).usuarioRole = dadosDecodificados.role;
 
     return next();
   } catch (err) {
