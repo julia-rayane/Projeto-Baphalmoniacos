@@ -60,12 +60,14 @@
     </div>
 
     <script>
-        // Busca o token salvo no navegador e valida o acesso
+        // Busca o token salvo no navegador e valida o acesso (token + role admin)
         function obterToken() {
             const token = localStorage.getItem('token');
-            if (!token) {
-                alert('Você precisa estar logado para acessar o painel administrativo!');
-                window.location.href = '/cadastro.html';
+            const role = localStorage.getItem('role');
+
+            if (!token || role !== 'admin') {
+                alert('Acesso restrito a administradores. Faça login como admin.');
+                window.location.href = '/login.html';
                 return null;
             }
             return token;
@@ -74,8 +76,9 @@
         // Função de Logout (Deslogar do sistema)
         function fazerLogout() {
             localStorage.removeItem('token');
+            localStorage.removeItem('role');
             alert('Você saiu do sistema.');
-            window.location.href = '/cadastro.html';
+            window.location.href = '/login.html';
         }
 
         // Verificar token imediatamente ao carregar a página
@@ -119,7 +122,8 @@
             } else if (res.status === 401 || res.status === 403) {
                 alert('Sessão inválida ou expirada. Faça login novamente.');
                 localStorage.removeItem('token');
-                window.location.href = '/cadastro.html';
+                localStorage.removeItem('role');
+                window.location.href = '/login.html';
             } else { 
                 alert('Falha ao salvar categoria.'); 
             }
@@ -151,7 +155,8 @@
             } else if (res.status === 401 || res.status === 403) {
                 alert('Sessão inválida ou expirada. Faça login novamente.');
                 localStorage.removeItem('token');
-                window.location.href = '/cadastro.html';
+                localStorage.removeItem('role');
+                window.location.href = '/login.html';
             } else { 
                 alert('Falha ao salvar produto.'); 
             }
