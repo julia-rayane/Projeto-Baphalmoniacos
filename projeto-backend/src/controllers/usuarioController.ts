@@ -22,14 +22,17 @@ export async function cadastrar(req: Request, res: Response) {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
+    // Cadastro público sempre cria um usuário do tipo "cliente".
+    // Contas "admin" não podem ser criadas por aqui — só via seed/banco.
     const novoUsuario = await prisma.usuario.create({
-      data: { nome, email, senha: senhaHash },
+      data: { nome, email, senha: senhaHash, role: 'cliente' },
     });
 
     return res.status(201).json({
       id: novoUsuario.id,
       nome: novoUsuario.nome,
       email: novoUsuario.email,
+      role: novoUsuario.role,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Erro interno ao cadastrar.' });
@@ -56,14 +59,14 @@ export async function login(req: Request, res: Response) {
     }
 
     const token = jwt.sign(
-      { id: usuario.id, email: usuario.email },
+      { id: usuario.id, email: usuario.email, role: usuario.role },
       JWT_SECRET,
       { expiresIn: '1d' }
     );
 
     return res.json({
       token,
-      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email },
+      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, role: usuario.role },
     });
   } catch (error) {
     return res.status(500).json({ error: 'Erro interno ao autenticar.' });
