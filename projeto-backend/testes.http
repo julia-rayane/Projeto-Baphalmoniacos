@@ -28,6 +28,21 @@ Content-Type: application/json
 
 ###
 
+### 2.1 LOGIN COMO ADMIN (usuário criado pelo seed)
+# @name loginAdmin
+POST {{baseUrl}}/signin
+Content-Type: application/json
+
+{
+  "email": "admin@baphalmoniacos.com",
+  "senha": "admin123"
+}
+
+### Captura automaticamente o token do admin
+@authTokenAdmin = {{loginAdmin.response.body.token}}
+
+###
+
 ### 3. TENTAR LOGIN COM SENHA INCORRETA (DEVE RETORNAR ERRO 400/401)
 POST {{baseUrl}}/signin
 Content-Type: application/json
@@ -67,11 +82,11 @@ Content-Type: application/json
 
 ### 7. CRIAR PRODUTO COM TOKEN (ROTA PROTEGIDA - SUCESSO)
 POST {{baseUrl}}/produtos
-Authorization: Bearer {{authToken}}
+Authorization: Bearer {{authTokenAdmin}}
 Content-Type: application/json
 
 {
-  "nome": "Jjajangmyeon",
+  "nome": "",
   "descricao": "Macarrão com molho de soja preta espesso, legumes e carne",
   "preco": 32.00,
   "foto": "buchimgae.png",
@@ -82,7 +97,7 @@ Content-Type: application/json
 
 ### 8. ATUALIZAR PRODUTO COM TOKEN (ROTA PROTEGIDA)
 PUT {{baseUrl}}/produtos/3
-Authorization: Bearer {{authToken}}
+Authorization: Bearer {{authTokenAdmin}}
 Content-Type: application/json
 
 {
@@ -97,25 +112,12 @@ Content-Type: application/json
 
 ### 9. REMOVER PRODUTO COM TOKEN (ROTA PROTEGIDA)
 DELETE {{baseUrl}}/produtos/1
-Authorization: Bearer {{authToken}}
+Authorization: Bearer {{authTokenAdmin}}
 Content-Type: application/json
-
-### 10. LOGIN COMO ADMIN (usuário criado pelo seed)
-# @name loginAdmin
-POST {{baseUrl}}/signin
-Content-Type: application/json
-
-{
-  "email": "admin@baphalmoniacos.com",
-  "senha": "admin123"
-}
-
-### Captura automaticamente o token do admin
-@authTokenAdmin = {{loginAdmin.response.body.token}}
 
 ###
 
-### 11. CRIAR PRODUTO COMO CLIENTE (DEVE RETORNAR ERRO 403 - SÓ ADMIN PODE)
+### 10. CRIAR PRODUTO COMO CLIENTE (DEVE RETORNAR ERRO 403 - SÓ ADMIN PODE)
 POST {{baseUrl}}/produtos
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
@@ -130,7 +132,7 @@ Content-Type: application/json
 
 ###
 
-### 12. CRIAR PRODUTO COMO ADMIN (DEVE FUNCIONAR)
+### 11. CRIAR PRODUTO COMO ADMIN (DEVE FUNCIONAR)
 POST {{baseUrl}}/produtos
 Authorization: Bearer {{authTokenAdmin}}
 Content-Type: application/json
