@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import SendMail from '../services/SendMail';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreta_super_segura';
@@ -22,11 +23,12 @@ export async function cadastrar(req: Request, res: Response) {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    // Cadastro público sempre cria um usuário do tipo "cliente".
-    // Contas "admin" não podem ser criadas por aqui — só via seed/banco.
     const novoUsuario = await prisma.usuario.create({
       data: { nome, email, senha: senhaHash, role: 'cliente' },
     });
+
+    // Dispara o e-mail após o registo com sucesso
+    await SendMail.createNewUser(novoUsuario.email);
 
     return res.status(201).json({
       id: novoUsuario.id,
