@@ -144,3 +144,13 @@ Content-Type: application/json
   "foto": "teste.png",
   "id_categoria_fk": 1
 }
+
+### 12. Teste de Erro de Validação (Corpo Inválido - 400 Bad Request)
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "nome": "",
+  "email": "email-invalido-sem-arroba",
+  "senha": "123"
+}
