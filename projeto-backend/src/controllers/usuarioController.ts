@@ -27,7 +27,7 @@ export async function cadastrar(req: Request, res: Response) {
       data: { nome, email, senha: senhaHash, role: 'cliente' },
     });
 
-    // Dispara o e-mail após o registo com sucesso
+    // Dispara o e-mail de confirmação
     await SendMail.createNewUser(novoUsuario.email);
 
     return res.status(201).json({
