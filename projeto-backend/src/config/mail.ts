@@ -1,31 +1,31 @@
 import nodemailer from 'nodemailer';
 
-async function mailConfig() {
-  // 1. Se existirem variáveis no .env, usa a configuração do ambiente
-  if (process.env.MAIL_USER && process.env.MAIL_PASS) {
+export default async function mailConfig() {
+  const host = process.env.EMAIL_HOST || process.env.MAIL_HOST;
+  const port = Number(process.env.EMAIL_PORT || process.env.MAIL_PORT) || 587;
+  const user = process.env.EMAIL_USER || process.env.MAIL_USER;
+  const pass = process.env.EMAIL_PASS || process.env.MAIL_PASS;
+  const secure = process.env.EMAIL_SECURE === 'true' || process.env.MAIL_SECURE === 'true';
+
+  // Se houver credenciais passadas via .env, usa o servidor SMTP configurado
+  if (host && user && pass) {
     return {
-      host: process.env.MAIL_HOST || 'smtp.ethereal.email',
-      port: Number(process.env.MAIL_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
+      host,
+      port,
+      secure,
+      auth: { user, pass }
     };
   }
 
-  // 2. Se não houver .env preenchido, gera a conta de teste do Ethereal
+  // Caso contrário, gera uma conta de testes automática do Ethereal Mail
   const testAccount = await nodemailer.createTestAccount();
-
   return {
     host: 'smtp.ethereal.email',
     port: 587,
     secure: false,
     auth: {
       user: testAccount.user,
-      pass: testAccount.pass,
-    },
+      pass: testAccount.pass
+    }
   };
 }
-
-export default mailConfig;
