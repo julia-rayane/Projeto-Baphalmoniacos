@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { cadastrar, login } from '../controllers/usuarioController'; 
-import { validate } from '../middlewares/validate';
-import { usuarioSchema } from '../schemas/usuarioSchema'; // Ajuste o nome/caminho conforme o arquivo schema
+import { cadastrar, login } from '../controllers/usuarioController.js'; 
+import { validate } from '../middlewares/validate.js';
+import { usuarioSchema } from '../schemas/usuarioSchema.js'; // Ajuste o nome/caminho conforme o arquivo schema
 
 const usuarioRoutes = Router();
 
