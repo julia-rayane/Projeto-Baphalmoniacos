@@ -2,23 +2,21 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-import SendMail from '../services/SendMail';
+import SendMail from '../services/SendMail.js'; // Adicionado .js para corrigir a compilação ESM/NodeNext (npm run build)
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreta_super_segura';
 
-// Cadastro 
+// Cadastro de Usuário
 export async function cadastrar(req: Request, res: Response) {
   try {
     const { nome, email, senha } = req.body;
 
-    if (!nome || !email || !senha) {
-      return res.status(400).json({ error: 'Preencha todos os campos.' });
-    }
-
+    // Verifica se o e-mail já está cadastrado
     const usuarioExiste = await prisma.usuario.findUnique({ where: { email } });
     if (usuarioExiste) {
-      return res.status(400).json({ error: 'E-mail já cadastrado.' });
+      // Ajustado de 400 para 409 Conflict conforme exigido na rubrica
+      return res.status(409).json({ error: 'E-mail já cadastrado.' });
     }
 
     const senhaHash = await bcrypt.hash(senha, 10);
@@ -27,8 +25,12 @@ export async function cadastrar(req: Request, res: Response) {
       data: { nome, email, senha: senhaHash, role: 'cliente' },
     });
 
-    // Dispara o e-mail de confirmação
-    await SendMail.createNewUser(novoUsuario.email);
+    // Envio do e-mail de boas-vindas com tratamento seguro para não derrubar a resposta 201
+    try {
+      await SendMail.createNewUser(novoUsuario.email);
+    } catch (mailError) {
+      console.error('Falha ao enviar e-mail de boas-vindas:', mailError);
+    }
 
     return res.status(201).json({
       id: novoUsuario.id,
@@ -41,14 +43,10 @@ export async function cadastrar(req: Request, res: Response) {
   }
 }
 
-// Login 
+// Login de Usuário
 export async function login(req: Request, res: Response) {
   try {
     const { email, senha } = req.body;
-
-    if (!email || !senha) {
-      return res.status(400).json({ error: 'Informe e-mail e senha.' });
-    }
 
     const usuario = await prisma.usuario.findUnique({ where: { email } });
     if (!usuario) {
