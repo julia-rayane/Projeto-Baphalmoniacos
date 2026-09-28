@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import mailConfig from '../config/mail';
+import mailConfig from '../config/mail.js'; // Adicionada a extensão .js obrigatória no NodeNext/ESM
 
 class SendMail {
   async createNewUser(to: string) {
