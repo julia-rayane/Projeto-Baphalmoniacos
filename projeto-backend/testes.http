@@ -154,3 +154,38 @@ Content-Type: application/json
   "email": "email-invalido-sem-arroba",
   "senha": "123"
 }
+
+### 13. UPLOAD DE AVATAR SEM AUTENTICAÇÃO (DEVE RETORNAR ERRO 401)
+POST {{baseUrl}}/users/image
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="file"; filename="avatar.png"
+Content-Type: image/png
+
+< ./public/buchimgae.png
+--Boundary123--
+
+### 14. UPLOAD DE AVATAR COM TIPO DE ARQUIVO INVÁLIDO (DEVE RETORNAR ERRO 400)
+POST {{baseUrl}}/users/image
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="file"; filename="documento.pdf"
+Content-Type: application/pdf
+
+< ./documento.pdf
+--Boundary123--
+
+### 15. UPLOAD DE AVATAR COM SUCESSO (DEVE RETORNAR 201 E A CAMINHO NO BANCO)
+POST {{baseUrl}}/users/image
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="file"; filename="buchimgae.png"
+Content-Type: image/png
+
+< ./public/buchimgae.png
+--Boundary123--
