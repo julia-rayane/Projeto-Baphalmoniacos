@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-import SendMail from '../services/SendMail.js'; // Adicionado .js para corrigir a compilação ESM/NodeNext (npm run build)
+import SendMail from '../services/SendMail.js';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreta_super_segura';
@@ -12,10 +12,8 @@ export async function cadastrar(req: Request, res: Response) {
   try {
     const { nome, email, senha } = req.body;
 
-    // Verifica se o e-mail já está cadastrado
     const usuarioExiste = await prisma.usuario.findUnique({ where: { email } });
     if (usuarioExiste) {
-      // Ajustado de 400 para 409 Conflict conforme exigido na rubrica
       return res.status(409).json({ error: 'E-mail já cadastrado.' });
     }
 
@@ -25,7 +23,6 @@ export async function cadastrar(req: Request, res: Response) {
       data: { nome, email, senha: senhaHash, role: 'cliente' },
     });
 
-    // Envio do e-mail de boas-vindas com tratamento seguro para não derrubar a resposta 201
     try {
       await SendMail.createNewUser(novoUsuario.email);
     } catch (mailError) {
@@ -66,9 +63,37 @@ export async function login(req: Request, res: Response) {
 
     return res.json({
       token,
-      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, role: usuario.role },
+      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, role: usuario.role, avatar: usuario.avatar },
     });
   } catch (error) {
     return res.status(500).json({ error: 'Erro interno ao autenticar.' });
+  }
+}
+
+// Upload de Avatar do Usuário
+export async function uploadAvatar(req: Request, res: Response) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
+    }
+
+    const usuarioId = (req as any).usuarioId;
+    const publicPath = `/imgs/profile/${req.file.filename}`;
+
+    const usuarioAtualizado = await prisma.usuario.update({
+      where: { id: usuarioId },
+      data: { avatar: publicPath },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        role: true,
+        avatar: true,
+      },
+    });
+
+    return res.status(201).json(usuarioAtualizado);
+  } catch (error) {
+    return res.status(400).json({ error: 'Erro ao atualizar o avatar do usuário.' });
   }
 }
