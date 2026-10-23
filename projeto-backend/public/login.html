@@ -1,45 +1,102 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Baphalmoníacos - Acesso Administrativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Cliente - Baphalmoniácos</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdf3f3; color: #333; padding: 20px; }
-        .container { max-width: 450px; margin: 40px auto; }
-        .box { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        h2 { color: #b32424; margin-top: 0; border-bottom: 2px solid #fde1e1; padding-bottom: 8px; }
-        label { font-weight: bold; display: block; margin-top: 10px; }
-        input { width: 100%; padding: 10px; margin: 6px 0 15px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { background: #248a3d; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        button:hover { background: #1c6b2f; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #b32424; text-decoration: none; font-weight: bold; }
-        .aviso { font-size: 0.85rem; color: #888; margin-top: 15px; text-align: center; }
+        :root {
+            --vermelho: #c62828;
+            --verde: #2e7d32;
+            --fundo: #fff5f5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--fundo); scroll-behavior: smooth; color: #333; }
+
+        /* MENU FIXO */
+        header { 
+            background: var(--vermelho); 
+            padding: 15px 5%; 
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+
+        section { padding: 60px 10%; }
+        h2 { margin-bottom: 30px; color: var(--vermelho); text-align: center; font-size: 2rem; }
+
+        /* LOGIN E CADASTRO */
+        .auth-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
+        .auth-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 380px; }
+        .auth-box h3 { color: var(--vermelho); margin-bottom: 15px; }
+        .auth-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+
+        /* BOTÕES */
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-vermelho { background: var(--vermelho); color: white; width: 100%; }
+        .btn-verde { background: var(--verde); color: white; width: 100%; margin-top: 15px; }
+
+        footer { background: #222; color: white; padding: 30px; text-align: center; margin-top: 50px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="/" class="back-link">← Voltar para o Site principal</a>
 
-        <div class="box">
-            <h2>Área Administrativa</h2>
-            <form id="formSignin">
-                <label>E-mail:</label>
-                <input type="email" id="emailSignin" placeholder="seu@email.com" required>
+    <header>
+        <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
+        <nav>
+            <ul class="nav-links" style="display: flex; align-items: center;">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#sobre">Nossa História</a></li>
+                <li><a href="cardapio.html">Cardápio</a></li>
+                <li><a href="carrinho.html">Meu Carrinho</a></li>
+                <li><a href="login.html">Entrar</a></li>
+                <li><a href="perfil.html">Meu Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
 
-                <label>Senha:</label>
-                <input type="password" id="senhaSignin" placeholder="Sua senha" required>
+    <section>
+        <h2>Área do Cliente</h2>
+        <div class="auth-container">
+            <!-- 1. LOGIN CLIENTE -->
+            <div class="auth-box">
+                <h3>Acessar à conta</h3>
+                <form id="formLogin">
+                    <input type="email" id="l-email" placeholder="Seu e-mail" required>
+                    <input type="password" id="l-senha" placeholder="Sua senha" required>
+                    <button type="submit" class="btn btn-vermelho">Entrar</button>
+                </form>
+            </div>
 
-                <button type="submit">Entrar no Painel</button>
-            </form>
-            <p class="aviso">Esta área é restrita a administradores. Se você é cliente, faça seu login na página inicial do site.</p>
+            <!-- 2. CADASTRO CLIENTE -->
+            <div class="auth-box">
+                <h3>Criar nova conta</h3>
+                <form id="formCadastro">
+                    <input type="text" id="c-nome" placeholder="Nome Completo" required>
+                    <input type="email" id="c-email" placeholder="Seu e-mail" required>
+                    <input type="password" id="c-senha" placeholder="Criar Senha" required>
+                    <button type="submit" class="btn btn-verde">Finalizar Registo</button>
+                </form>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Baphalmoniácos | Júlia Rayane e Maria Isabely | IFPB</p>
+        <p style="margin-top: 10px;"><a href="admin.html" style="color: #999; font-size: 0.85rem;">Acesso administrativo</a></p>
+    </footer>
 
     <script>
-        document.getElementById('formSignin').addEventListener('submit', async (e) => {
+        // LÓGICA DE LOGIN
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('emailSignin').value;
-            const senha = document.getElementById('senhaSignin').value;
+            const email = document.getElementById('l-email').value;
+            const senha = document.getElementById('l-senha').value;
 
             try {
                 const res = await fetch('/signin', {
@@ -51,21 +108,51 @@
                 const dados = await res.json();
 
                 if (res.ok && dados.token) {
-                    if (dados.usuario.role !== 'admin') {
-                        alert('Este login é válido, mas essa conta não tem permissão de administrador.');
-                        return;
-                    }
                     localStorage.setItem('token', dados.token);
                     localStorage.setItem('role', dados.usuario.role);
-                    window.location.href = '/admin.html';
+                    alert(`Login realizado com sucesso! Bem-vindo(a), ${dados.usuario.nome}.`);
+                    
+                    // Se for admin, pode ir para a página de admin, senão vai para o perfil
+                    if (dados.usuario.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'perfil.html';
+                    }
                 } else {
                     alert(dados.error || 'E-mail ou senha incorretos.');
                 }
             } catch (err) {
-                console.error('Erro ao fazer login:', err);
+                alert('Erro de conexão com o servidor.');
+            }
+        });
+
+        // LÓGICA DE CADASTRO
+        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('c-nome').value;
+            const email = document.getElementById('c-email').value;
+            const senha = document.getElementById('c-senha').value;
+
+            try {
+                const res = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+
+                const dados = await res.json();
+
+                if (res.ok) {
+                    alert('Conta criada com sucesso! Faça o login no formulário ao lado.');
+                    document.getElementById('formCadastro').reset();
+                } else {
+                    alert(dados.error || 'Erro ao realizar cadastro.');
+                }
+            } catch (err) {
                 alert('Erro de conexão com o servidor.');
             }
         });
     </script>
+
 </body>
 </html>
