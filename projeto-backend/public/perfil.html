@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Baphalmoniácos</title>
+    <style>
+        :root {
+            --vermelho: #c62828;
+            --verde: #2e7d32;
+            --fundo: #fff5f5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--fundo); scroll-behavior: smooth; color: #333; }
+
+        /* MENU FIXO */
+        header { 
+            background: var(--vermelho); 
+            padding: 15px 5%; 
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+
+        section { padding: 60px 10%; }
+        h2 { margin-bottom: 30px; color: var(--vermelho); text-align: center; font-size: 2rem; }
+
+        /* CONTAINER DO PERFIL */
+        .profile-container { display: flex; justify-content: center; }
+        .profile-box { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            width: 100%; 
+            max-width: 450px; 
+            text-align: center; 
+        }
+        .profile-box h3 { color: var(--vermelho); margin-bottom: 20px; }
+        
+        .avatar-wrapper { margin: 20px 0; }
+        .avatar-img { 
+            width: 130px; 
+            height: 130px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 3px solid var(--vermelho);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* BOTÕES E INPUTS */
+        input[type="file"] { margin: 15px 0; padding: 8px; width: 100%; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-vermelho { background: var(--vermelho); color: white; width: 100%; }
+        .btn-sair { background: #555; color: white; width: 100%; margin-top: 15px; }
+
+        footer { background: #222; color: white; padding: 30px; text-align: center; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
+        <nav>
+            <ul class="nav-links" style="display: flex; align-items: center;">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#sobre">Nossa História</a></li>
+                <li><a href="cardapio.html">Cardápio</a></li>
+                <li><a href="carrinho.html">Meu Carrinho</a></li>
+                <li><a href="login.html">Entrar</a></li>
+                <li><a href="perfil.html">Meu Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <h2>Meu Perfil</h2>
+        <div class="profile-container">
+            <div class="profile-box">
+                <h3>Foto de Perfil</h3>
+                <div class="avatar-wrapper">
+                    <img id="avatar-preview" src="buchimgae.png" alt="Foto do Usuário" class="avatar-img">
+                </div>
+                
+                <form id="formUploadAvatar">
+                    <input type="file" id="a-file" accept="image/png, image/jpeg, image/gif" required>
+                    <button type="submit" class="btn btn-vermelho">Atualizar Foto</button>
+                </form>
+                
+                <p id="msg-avatar" style="margin-top: 15px; font-weight: bold; font-size: 0.95rem;"></p>
+
+                <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <button type="button" class="btn btn-sair" onclick="logout()">Sair da Conta</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Baphalmoniácos | Júlia Rayane e Maria Isabely | IFPB</p>
+        <p style="margin-top: 10px;"><a href="admin.html" style="color: #999; font-size: 0.85rem;">Acesso administrativo</a></p>
+    </footer>
+
+    <script>
+        // LÓGICA DE UPLOAD DE AVATAR (MANTIDA EXATAMENTE COMO NO SEU CÓDIGO)
+        document.getElementById('formUploadAvatar').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('a-file');
+            const msgAvatar = document.getElementById('msg-avatar');
+            const preview = document.getElementById('avatar-preview');
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                msgAvatar.style.color = 'red';
+                msgAvatar.innerText = 'Você precisa fazer login primeiro!';
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                msgAvatar.style.color = 'red';
+                msgAvatar.innerText = 'Selecione uma imagem.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch('/users/image', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const dados = await res.json();
+
+                if (res.ok) {
+                    msgAvatar.style.color = 'green';
+                    msgAvatar.innerText = 'Foto atualizada com sucesso!';
+                    if (dados.avatar) {
+                        preview.src = dados.avatar;
+                    }
+                } else {
+                    msgAvatar.style.color = 'red';
+                    msgAvatar.innerText = dados.error || 'Erro ao enviar a imagem.';
+                }
+            } catch (err) {
+                msgAvatar.style.color = 'red';
+                msgAvatar.innerText = 'Erro de conexão com o servidor.';
+            }
+        });
+
+        // FUNÇÃO PARA SAIR DA CONTA
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            alert('Você saiu da sua conta.');
+            window.location.href = 'login.html';
+        }
+    </script>
+
+</body>
+</html>
