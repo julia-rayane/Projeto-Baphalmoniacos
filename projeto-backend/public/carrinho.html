@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Carrinho - Baphalmoniácos</title>
+    <style>
+        :root {
+            --vermelho: #c62828;
+            --verde: #2e7d32;
+            --fundo: #fff5f5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--fundo); scroll-behavior: smooth; color: #333; }
+
+        /* MENU FIXO */
+        header { 
+            background: var(--vermelho); 
+            padding: 15px 5%; 
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+
+        section { padding: 60px 10%; }
+        h2 { margin-bottom: 30px; color: var(--vermelho); text-align: center; font-size: 2rem; }
+
+        /* CARRINHO */
+        .area-carrinho { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 900px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
+        
+        /* BOTÕES */
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-verde { background: var(--verde); color: white; width: 100%; margin-top: 15px; }
+
+        footer { background: #222; color: white; padding: 30px; text-align: center; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" style="font-size: 1.5rem;">Baphalmoniácos 🍜</div>
+        <nav>
+            <ul class="nav-links" style="display: flex; align-items: center;">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#sobre">Nossa História</a></li>
+                <li><a href="cardapio.html">Cardápio</a></li>
+                <li><a href="carrinho.html">Meu Carrinho</a></li>
+                <li><a href="login.html">Entrar</a></li>
+                <li><a href="perfil.html">Meu Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <div class="area-carrinho">
+            <h2>Meu Pedido</h2>
+            <table id="tabela-pedido">
+                <thead>
+                    <tr>
+                        <th>Prato</th>
+                        <th>Preço</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div style="text-align:right; margin-top:20px; font-weight:bold; font-size:1.4rem;">
+                Total: R$ <span id="soma-total">0.00</span>
+            </div>
+            <button class="btn btn-verde" style="font-size:1.1rem;" onclick="finalizar()">Confirmar Pedido (Pix ou Cartão)</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Baphalmoniácos | Júlia Rayane e Maria Isabely | IFPB</p>
+        <p style="margin-top: 10px;"><a href="admin.html" style="color: #999; font-size: 0.85rem;">Acesso administrativo</a></p>
+    </footer>
+
+    <!-- SCRIPT DA VITRINE E CARRINHO -->
+    <script src="app.js"></script>
+
+</body>
+</html>
