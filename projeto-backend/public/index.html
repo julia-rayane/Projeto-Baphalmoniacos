@@ -41,7 +41,7 @@
 
         /* LOGIN E CADASTRO */
         .auth-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-        .auth-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        .auth-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 350px; }
         .auth-box h3 { color: var(--vermelho); margin-bottom: 15px; }
         .auth-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
 
@@ -107,6 +107,7 @@
                     <button type="submit" class="btn btn-vermelho">Entrar</button>
                 </form>
             </div>
+
             <!-- 2. CADASTRO -->
             <div class="auth-box">
                 <h3>Criar nova conta</h3>
@@ -116,6 +117,19 @@
                     <input type="password" id="c-senha" placeholder="Criar Senha" required>
                     <button type="submit" class="btn btn-verde">Finalizar Registo</button>
                 </form>
+            </div>
+
+            <!-- 3. UPLOAD DE AVATAR -->
+            <div class="auth-box" style="text-align: center;">
+                <h3>Foto do Perfil</h3>
+                <div style="margin: 15px 0;">
+                    <img id="avatar-preview" src="buchimgae.png" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--vermelho);">
+                </div>
+                <form id="formUploadAvatarIndex">
+                    <input type="file" id="a-file" accept="image/png, image/jpeg, image/gif" required style="padding: 5px;">
+                    <button type="submit" class="btn btn-vermelho" style="margin-top: 10px;">Enviar Foto</button>
+                </form>
+                <p id="msg-avatar" style="margin-top: 10px; font-weight: bold; font-size: 0.9rem;"></p>
             </div>
         </div>
     </section>
@@ -153,7 +167,7 @@
     <!-- SCRIPT DA VITRINE E CARRINHO -->
     <script src="app.js"></script>
 
-    <!-- SCRIPT DE AUTENTICAÇÃO (LOGIN/SIGNUP) -->
+    <!-- SCRIPT DE AUTENTICAÇÃO (LOGIN/SIGNUP/AVATAR) -->
     <script>
         // LÓGICA DE LOGIN (SIGNIN)
         document.getElementById('formLoginIndex').addEventListener('submit', async (e) => {
@@ -175,6 +189,10 @@
                     localStorage.setItem('role', dados.usuario.role);
                     alert(`Login realizado com sucesso! Bem-vindo(a), ${dados.usuario.nome}.`);
                     document.getElementById('formLoginIndex').reset();
+                    
+                    if (dados.usuario.avatar) {
+                        document.getElementById('avatar-preview').src = dados.usuario.avatar;
+                    }
                 } else {
                     alert(dados.error || 'E-mail ou senha incorretos.');
                 }
@@ -207,6 +225,54 @@
                 }
             } catch (err) {
                 alert('Erro de conexão com o servidor.');
+            }
+        });
+
+        // LÓGICA DE UPLOAD DE AVATAR (FORM DATA)
+        document.getElementById('formUploadAvatarIndex').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('a-file');
+            const msgAvatar = document.getElementById('msg-avatar');
+            const preview = document.getElementById('avatar-preview');
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                msgAvatar.style.color = 'red';
+                msgAvatar.innerText = 'Você precisa fazer login primeiro!';
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                msgAvatar.style.color = 'red';
+                msgAvatar.innerText = 'Selecione uma imagem.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch('/users/image', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const dados = await res.json();
+
+                if (res.ok) {
+                    msgAvatar.style.color = 'green';
+                    msgAvatar.innerText = 'Foto atualizada com sucesso!';
+                    if (dados.avatar) {
+                        preview.src = dados.avatar;
+                    }
+                } else {
+                    msgAvatar.style.color = 'red';
+                    msgAvatar.innerText = dados.error || 'Erro ao enviar a imagem.';
+                }
+            } catch (err) {
+                msgAvatar.style.color = 'red';
+                msgAvatar.innerText = 'Erro de conexão com o servidor.';
             }
         });
     </script>
