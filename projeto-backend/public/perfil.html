@@ -51,6 +51,7 @@
             object-fit: cover; 
             border: 3px solid var(--vermelho);
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            background-color: #f0f0f0;
         }
 
         /* BOTÕES E INPUTS */
@@ -84,7 +85,8 @@
             <div class="profile-box">
                 <h3>Foto de Perfil</h3>
                 <div class="avatar-wrapper">
-                    <img id="avatar-preview" src="buchimgae.png" alt="Foto do Usuário" class="avatar-img">
+                    <!-- FOTO INICIAL PADRÃO (BONEQUINHO PRETO E BRANCO) -->
+                    <img id="avatar-preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto do Usuário" class="avatar-img">
                 </div>
                 
                 <form id="formUploadAvatar">
@@ -110,28 +112,39 @@
     <script src="app.js"></script>
 
     <script>
-        // PROTEÇÃO DE ROTA IMEDIATA: Bloqueia acesso direto sem token antes de carregar o restante
-        (function verificarAcesso() {
-            const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
+
+        // PROTEÇÃO DE ROTA E CARREGAMENTO DA FOTO DO USUÁRIO
+        (async function inicializarPerfil() {
             if (!token) {
                 alert('Você precisa fazer login para acessar o seu perfil!');
                 window.location.href = 'login.html';
+                return;
+            }
+
+            // Tenta buscar as informações do usuário logado para carregar a foto atual
+            try {
+                const res = await fetch('/users/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const usuario = await res.json();
+                    if (usuario.avatar) {
+                        document.getElementById('avatar-preview').src = usuario.avatar;
+                    }
+                }
+            } catch (err) {
+                console.log('Não foi possível carregar a foto personalizada, mantendo a foto padrão.');
             }
         })();
 
-        // LÓGICA DE UPLOAD DE AVATAR
+        // LÓGICA DE UPLOAD DE AVATAR (ATUALIZA E MANTEIM A NOVA FOTO)
         document.getElementById('formUploadAvatar').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fileInput = document.getElementById('a-file');
             const msgAvatar = document.getElementById('msg-avatar');
             const preview = document.getElementById('avatar-preview');
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                msgAvatar.style.color = 'red';
-                msgAvatar.innerText = 'Você precisa fazer login primeiro!';
-                return;
-            }
 
             if (!fileInput.files || fileInput.files.length === 0) {
                 msgAvatar.style.color = 'red';
