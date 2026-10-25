@@ -106,11 +106,20 @@
         <p style="margin-top: 10px;"><a href="admin.html" style="color: #999; font-size: 0.85rem;">Acesso administrativo</a></p>
     </footer>
 
-    <!-- SCRIPT GERAL (Menu Dinâmico e Proteção de Rotas) -->
+    <!-- SCRIPT GERAL -->
     <script src="app.js"></script>
 
     <script>
-        // LÓGICA DE UPLOAD DE AVATAR (MANTIDA EXATAMENTE COMO NO SEU CÓDIGO)
+        // PROTEÇÃO DE ROTA IMEDIATA: Bloqueia acesso direto sem token antes de carregar o restante
+        (function verificarAcesso() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Você precisa fazer login para acessar o seu perfil!');
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // LÓGICA DE UPLOAD DE AVATAR
         document.getElementById('formUploadAvatar').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fileInput = document.getElementById('a-file');
