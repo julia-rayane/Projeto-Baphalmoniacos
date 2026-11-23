@@ -61,6 +61,11 @@
         .btn-sair { background: #555; color: white; width: 100%; margin-top: 15px; }
 
         footer { background: #222; color: white; padding: 30px; text-align: center; margin-top: 50px; }
+    
+        .perfil-email { color: #666; margin-bottom: 5px; }
+        .legenda { font-size: 0.85rem; color: #888; min-height: 1.2em; }
+        .dica { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -83,22 +88,25 @@
         <h2>Meu Perfil</h2>
         <div class="profile-container">
             <div class="profile-box">
-                <h3>Foto de Perfil</h3>
+                <h3 id="perfil-nome">Carregando...</h3>
+                <p id="perfil-email" class="perfil-email"></p>
+
                 <div class="avatar-wrapper">
-                    <!-- FOTO INICIAL PADRÃO (BONEQUINHO PRETO E BRANCO) -->
-                    <img id="avatar-preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto do Usuário" class="avatar-img">
+                    <img id="avatar-preview" src="/imgs/avatar-padrao.svg" alt="Foto do usuário" class="avatar-img">
                 </div>
-                
-                <form id="formUploadAvatar">
-                    <input type="file" id="a-file" accept="image/png, image/jpeg, image/gif" required>
-                    <button type="submit" class="btn btn-vermelho">Atualizar Foto</button>
+                <p id="preview-legenda" class="legenda"></p>
+
+                <form id="formUploadAvatar" enctype="multipart/form-data">
+                    <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/gif" required>
+                    <p class="dica">Formatos: JPEG, PNG ou GIF &bull; tamanho máximo: 2 MB</p>
+                    <button type="submit" id="btn-enviar" class="btn btn-vermelho" disabled>Atualizar Foto</button>
                 </form>
-                
-                <p id="msg-avatar" style="margin-top: 15px; font-weight: bold; font-size: 0.95rem;"></p>
+
+                <p id="msg-avatar" role="status" style="margin-top: 15px; font-weight: bold; font-size: 0.95rem;"></p>
 
                 <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
-                
-                <button type="button" class="btn btn-sair" onclick="logout()">Sair da Conta</button>
+
+                <button type="button" id="btn-sair" class="btn btn-sair">Sair da Conta</button>
             </div>
         </div>
     </section>
@@ -108,86 +116,10 @@
         <p style="margin-top: 10px;"><a href="admin.html" style="color: #999; font-size: 0.85rem;">Acesso administrativo</a></p>
     </footer>
 
-    <!-- SCRIPT GERAL -->
+    <!-- Script geral (carrinho + avatar no cabeçalho) -->
     <script src="app.js"></script>
-
-    <script>
-        const token = localStorage.getItem('token');
-
-        // PROTEÇÃO DE ROTA E CARREGAMENTO DA FOTO DO USUÁRIO
-        (async function inicializarPerfil() {
-            if (!token) {
-                alert('Você precisa fazer login para acessar o seu perfil!');
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // Tenta buscar as informações do usuário logado para carregar a foto atual
-            try {
-                const res = await fetch('/users/me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (res.ok) {
-                    const usuario = await res.json();
-                    if (usuario.avatar) {
-                        document.getElementById('avatar-preview').src = usuario.avatar;
-                    }
-                }
-            } catch (err) {
-                console.log('Não foi possível carregar a foto personalizada, mantendo a foto padrão.');
-            }
-        })();
-
-        // LÓGICA DE UPLOAD DE AVATAR (ATUALIZA E MANTEIM A NOVA FOTO)
-        document.getElementById('formUploadAvatar').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fileInput = document.getElementById('a-file');
-            const msgAvatar = document.getElementById('msg-avatar');
-            const preview = document.getElementById('avatar-preview');
-
-            if (!fileInput.files || fileInput.files.length === 0) {
-                msgAvatar.style.color = 'red';
-                msgAvatar.innerText = 'Selecione uma imagem.';
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-
-            try {
-                const res = await fetch('/users/image', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                });
-
-                const dados = await res.json();
-
-                if (res.ok) {
-                    msgAvatar.style.color = 'green';
-                    msgAvatar.innerText = 'Foto atualizada com sucesso!';
-                    if (dados.avatar) {
-                        preview.src = dados.avatar;
-                    }
-                } else {
-                    msgAvatar.style.color = 'red';
-                    msgAvatar.innerText = dados.error || 'Erro ao enviar a imagem.';
-                }
-            } catch (err) {
-                msgAvatar.style.color = 'red';
-                msgAvatar.innerText = 'Erro de conexão com o servidor.';
-            }
-        });
-
-        // FUNÇÃO PARA SAIR DA CONTA
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            alert('Você saiu da sua conta.');
-            window.location.href = 'login.html';
-        }
-    </script>
+    <!-- Lógica do perfil: carregar dados, pré-visualizar e enviar a imagem -->
+    <script type="module" src="js/profile.js"></script>
 
 </body>
 </html>
