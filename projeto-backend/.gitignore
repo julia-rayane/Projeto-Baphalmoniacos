@@ -6,6 +6,17 @@ dist
 prisma/dev.db
 prisma/dev.db-journal
 
+# bancos descartáveis usados pelos testes (recriados a cada execução)
+prisma/test.db
+prisma/test.db-journal
+prisma/e2e.db
+prisma/e2e.db-journal
+
+# relatórios gerados pelos testes
+coverage/
+playwright-report/
+test-results/
+
 # imagens enviadas pelos usuários ficam fora do Git, mas a pasta é mantida
 public/imgs/profile/*
 !public/imgs/profile/.gitkeep
