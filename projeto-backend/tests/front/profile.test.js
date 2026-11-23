@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { criarStorageFalso, respostaFalsa } from './helpers.js';
 
 // A página real (perfil.html) é carregada no JSDOM, então os testes usam os mesmos ids do site
-const html = readFileSync(new URL('../../public/perfil.html', import.meta.url), 'utf8');
+const html = readFileSync(path.resolve(process.cwd(), 'public/perfil.html'), 'utf8');
 
 function montarPagina() {
   const doc = new DOMParser().parseFromString(html, 'text/html');
