@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model Categoria {
@@ -29,6 +29,15 @@ model Usuario {
   email    String   @unique
   senha    String
   role     String   @default("cliente") // "cliente" ou "admin"
-  avatar   String?  
   criadoEm DateTime @default(now())
+  image    Image? // no máximo UMA imagem (avatar) por usuário
+}
+
+// Arquivo enviado pelo usuário. "usuarioId @unique" garante 1 registro por usuário:
+// um novo envio atualiza o caminho (upsert) em vez de criar um segundo registro.
+model Image {
+  id        Int     @id @default(autoincrement())
+  path      String // caminho público, ex.: /imgs/profile/<hash>.png
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioId Int     @unique
 }
