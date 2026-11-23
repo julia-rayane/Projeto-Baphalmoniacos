@@ -106,8 +106,45 @@ window.finalizar = function() {
     atualizarCarrinho();
 }
 
-// Executa automaticamente ao carregar qualquer página
+// ===== AVATAR NO CABEÇALHO (aparece em todas as telas que carregam este arquivo) =====
+const AVATAR_PADRAO = "/imgs/avatar-padrao.svg";
+
+// Coloca a foto ao lado do link "Meu Perfil". Se src for vazio, usa a imagem padrão.
+window.atualizarAvatarCabecalho = function (src) {
+    const link = document.querySelector('.nav-links a[href="perfil.html"]');
+    if (!link) return;
+
+    let img = link.querySelector(".avatar-nav");
+    if (!img) {
+        img = document.createElement("img");
+        img.className = "avatar-nav";
+        img.alt = "Foto de perfil";
+        img.style.cssText = "width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;border:2px solid white;background:#fff;";
+        link.prepend(img);
+    }
+    img.src = src || AVATAR_PADRAO;
+};
+
+// Busca o usuário logado e mostra a foto dele no cabeçalho
+async function carregarAvatarCabecalho() {
+    const token = localStorage.getItem("token");
+    if (!token) return; // visitante: não mostra avatar
+
+    try {
+        const resposta = await fetch("/api/users/me", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!resposta.ok) return;
+
+        const usuario = await resposta.json();
+        window.atualizarAvatarCabecalho(usuario.image ? usuario.image.path : null);
+    } catch (erro) {
+        // sem conexão: mantém o cabeçalho como está
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     carregarCardapio();
     atualizarCarrinho();
+    carregarAvatarCabecalho();
 });
