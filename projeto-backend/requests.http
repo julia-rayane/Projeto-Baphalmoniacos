@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ### Captura automaticamente o token retornado pelo login
-@authToken = {{login.response.body.token}}
+@authToken = {{login.response.body.$.token}}
 
 ###
 
@@ -39,7 +39,7 @@ Content-Type: application/json
 }
 
 ### Captura automaticamente o token do admin
-@authTokenAdmin = {{loginAdmin.response.body.token}}
+@authTokenAdmin = {{loginAdmin.response.body.$.token}}
 
 ###
 
@@ -86,7 +86,7 @@ Authorization: Bearer {{authTokenAdmin}}
 Content-Type: application/json
 
 {
-  "nome": "",
+  "nome": "Jjajangmyeon",
   "descricao": "Macarrão com molho de soja preta espesso, legumes e carne",
   "preco": 32.00,
   "foto": "buchimgae.png",
@@ -155,37 +155,106 @@ Content-Type: application/json
   "senha": "123"
 }
 
-### 13. UPLOAD DE AVATAR SEM AUTENTICAÇÃO (DEVE RETORNAR ERRO 401)
-POST {{baseUrl}}/users/image
+############################################################
+# TESTES DE UPLOAD DE IMAGEM (avatar do usuário)
+# Antes de rodar: crie o arquivo tests/grande.png com mais de 2MB
+#   Windows (cmd):  fsutil file createnew tests\grande.png 3000000
+#   Linux/Mac:      head -c 3000000 /dev/zero > tests/grande.png
+# O usuário teste@email.com precisa existir (rode o teste 1 antes).
+############################################################
+
+### U1. UPLOAD SEM TOKEN (DEVE RETORNAR 401 E NÃO GRAVAR NADA NO DISCO)
+POST {{baseUrl}}/api/users/image
 Content-Type: multipart/form-data; boundary=Boundary123
 
 --Boundary123
-Content-Disposition: form-data; name="file"; filename="avatar.png"
+Content-Disposition: form-data; name="image"; filename="avatar.png"
 Content-Type: image/png
 
 < ./public/buchimgae.png
 --Boundary123--
 
-### 14. UPLOAD DE AVATAR COM TIPO DE ARQUIVO INVÁLIDO (DEVE RETORNAR ERRO 400)
-POST {{baseUrl}}/users/image
+### U2. UPLOAD DE TIPO NÃO PERMITIDO - PDF (DEVE RETORNAR 400)
+POST {{baseUrl}}/api/users/image
 Authorization: Bearer {{authToken}}
 Content-Type: multipart/form-data; boundary=Boundary123
 
 --Boundary123
-Content-Disposition: form-data; name="file"; filename="documento.pdf"
+Content-Disposition: form-data; name="image"; filename="documento.pdf"
 Content-Type: application/pdf
 
-< ./documento.pdf
+< ./tests/documento.pdf
 --Boundary123--
 
-### 15. UPLOAD DE AVATAR COM SUCESSO (DEVE RETORNAR 201 E A CAMINHO NO BANCO)
-POST {{baseUrl}}/users/image
+### U3. UPLOAD MAIOR QUE 2MB (DEVE RETORNAR 400)
+POST {{baseUrl}}/api/users/image
 Authorization: Bearer {{authToken}}
 Content-Type: multipart/form-data; boundary=Boundary123
 
 --Boundary123
-Content-Disposition: form-data; name="file"; filename="buchimgae.png"
+Content-Disposition: form-data; name="image"; filename="grande.png"
+Content-Type: image/png
+
+< ./tests/grande.png
+--Boundary123--
+
+### U4. REQUISIÇÃO SEM ARQUIVO (DEVE RETORNAR 400)
+POST {{baseUrl}}/api/users/image
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="observacao"
+
+sem arquivo
+--Boundary123--
+
+### U5. UPLOAD VÁLIDO (DEVE RETORNAR 201 COM O CAMINHO PÚBLICO)
+# @name upload
+POST {{baseUrl}}/api/users/image
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="image"; filename="avatar.png"
 Content-Type: image/png
 
 < ./public/buchimgae.png
 --Boundary123--
+
+### U6. ACESSAR A IMAGEM PELO CAMINHO DEVOLVIDO (DEVE RETORNAR 200 image/png)
+GET {{baseUrl}}{{upload.response.body.$.path}}
+
+### U7. REENVIO PELO MESMO USUÁRIO (PUT) - DEVE RETORNAR 200 COM CAMINHO DIFERENTE
+# @name reupload
+PUT {{baseUrl}}/api/users/image
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="image"; filename="outra-foto.png"
+Content-Type: image/png
+
+< ./public/tteokbokki.png
+--Boundary123--
+
+### U8. PUT SEM TOKEN (DEVE RETORNAR 401)
+PUT {{baseUrl}}/api/users/image
+Content-Type: multipart/form-data; boundary=Boundary123
+
+--Boundary123
+Content-Disposition: form-data; name="image"; filename="avatar.png"
+Content-Type: image/png
+
+< ./public/buchimgae.png
+--Boundary123--
+
+### U9. CONFERIR NO BANCO: image.path DEVE SER O CAMINHO NOVO (UM ÚNICO REGISTRO)
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{authToken}}
+
+### U10. CAMINHO ANTIGO NÃO EXISTE MAIS (DEVE RETORNAR 404 - ARQUIVO ANTIGO FOI APAGADO)
+GET {{baseUrl}}{{upload.response.body.$.path}}
+
+### U11. CAMINHO NOVO CONTINUA ACESSÍVEL (DEVE RETORNAR 200)
+GET {{baseUrl}}{{reupload.response.body.$.path}}
