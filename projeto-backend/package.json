@@ -3,12 +3,33 @@
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
-   "scripts": {
+  "engines": {
+    "node": ">=22.8.0"
+  },
+  "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "db:migrate": "prisma migrate dev",
-    "db:load": "prisma migrate deploy && prisma db seed"
+    "db:load": "prisma migrate deploy && prisma db seed",
+
+    "db:prepare:test": "node --env-file=.env.test --import tsx tests/setup/prepare-db.ts",
+    "db:prepare:e2e": "node --env-file=.env.e2e --import tsx tests/setup/prepare-db.ts",
+
+    "test:unit": "node --env-file=.env.test --import tsx --test \"tests/unit/**/*.test.ts\"",
+    "test:api": "npm run db:prepare:test && node --env-file=.env.test --import tsx --test --test-concurrency=1 \"tests/api/**/*.test.ts\"",
+    "test": "npm run test:unit && npm run test:api",
+
+    "front:test": "vitest run",
+    "front:coverage": "vitest run --coverage",
+
+    "e2e:install": "playwright install chromium",
+    "e2e": "npm run db:prepare:e2e && playwright test",
+
+    "coverage:server": "npm run db:prepare:test && node --env-file=.env.test --import tsx --enable-source-maps --test --test-concurrency=1 --experimental-test-coverage --test-coverage-include=\"src/**/*.ts\" --test-coverage-exclude=\"src/index.ts\" --test-coverage-exclude=\"src/types/**\" --test-coverage-lines=80 --test-coverage-functions=75 --test-coverage-branches=65 \"tests/unit/**/*.test.ts\" \"tests/api/**/*.test.ts\"",
+    "coverage": "npm run coverage:server && npm run front:coverage",
+
+    "test:all": "npm run coverage && npm run e2e"
   },
   "dependencies": {
     "@prisma/client": "^5.16.1",
@@ -25,17 +46,23 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.12.0",
     "@types/nodemailer": "^6.4.16",
+    "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^3.2.4",
+    "jsdom": "^26.1.0",
     "prisma": "^5.16.1",
+    "supertest": "^7.1.4",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
