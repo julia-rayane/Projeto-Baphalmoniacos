@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
-const SEGREDO_JWT = process.env.JWT_SECRET || 'secreta_super_segura';
+import { JWT_SECRET } from '../config/auth.js';
 
 interface PayloadToken {
   id: number;
@@ -31,8 +30,8 @@ export function autenticacaoMiddleware(req: Request, res: Response, next: NextFu
   }
 
   try {
-    const dadosDecodificados = jwt.verify(token, SEGREDO_JWT) as PayloadToken;
-    
+    const dadosDecodificados = jwt.verify(token, JWT_SECRET) as PayloadToken;
+
     // Anexa o ID e o tipo (role) do usuário à requisição
     (req as any).usuarioId = dadosDecodificados.id;
     (req as any).usuarioRole = dadosDecodificados.role;
