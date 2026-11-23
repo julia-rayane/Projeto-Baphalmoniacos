@@ -1,5 +1,14 @@
 node_modules
 dist
 .env
+
+# banco SQLite local
+prisma/dev.db
+prisma/dev.db-journal
+
+# imagens enviadas pelos usuários ficam fora do Git, mas a pasta é mantida
 public/imgs/profile/*
 !public/imgs/profile/.gitkeep
+
+# arquivo grande usado só para testar o limite de 2MB
+tests/grande.png
