@@ -11,40 +11,66 @@ function carregarCardapio() {
         .then(resposta => resposta.json())
         .then(dados => {
             produtosDaAPI = dados;
-            vitrine.innerHTML = "";
-
-            dados.forEach(p => {
-                // MÁGICA DA FOTO: Se p.foto estiver vazio, escolhe a imagem certa pelo nome
-                let imagemFinal = p.foto;
-
-                if (!imagemFinal) {
-                    const nomeMinusculo = p.nome ? p.nome.toLowerCase() : '';
-                    if (nomeMinusculo.includes('tteokbokki')) {
-                        imagemFinal = 'tteokbokki.png';
-                    } else if (nomeMinusculo.includes('buchimgae')) {
-                        imagemFinal = 'buchimgae.png';
-                    } else if (nomeMinusculo.includes('lamen') || nomeMinusculo.includes('lámen')) {
-                        imagemFinal = 'lámen.png'; // Nome corrigido com acento
-                    } else {
-                        imagemFinal = 'lámen.png'; // Foto padrão de segurança
-                    }
-                }
-
-                vitrine.innerHTML += `
-                    <div class="card">
-                        <img src="${imagemFinal}" alt="${p.nome || 'Prato'}">
-                        <h3>${p.nome}</h3>
-                        <p style="font-weight: bold; color: var(--vermelho); margin-bottom: 5px;">R$ ${Number(p.preco).toFixed(2)}</p>
-                        
-                        <p style="font-size: 0.85rem; color: #666; margin: 10px 0; min-height: 40px; line-height: 1.4;">
-                            ${p.descricao || ''}
-                        </p>
-                        
-                        <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id})">Adicionar ao Carrinho</button>
-                    </div>`;
-            });
+            mostrarProdutos(dados);
+            ligarFiltroCategoria();
         })
         .catch(erro => console.error("Erro ao carregar os dados da API:", erro));
+}
+
+// Desenha os cards na vitrine (usada no carregamento e quando o filtro muda)
+function mostrarProdutos(lista) {
+    const vitrine = document.getElementById("vitrine");
+    vitrine.innerHTML = "";
+    lista.forEach(p => {
+        // MÁGICA DA FOTO: Se p.foto estiver vazio, escolhe a imagem certa pelo nome
+        let imagemFinal = p.foto;
+
+        if (!imagemFinal) {
+            const nomeMinusculo = p.nome ? p.nome.toLowerCase() : '';
+            if (nomeMinusculo.includes('tteokbokki')) {
+                imagemFinal = 'tteokbokki.png';
+            } else if (nomeMinusculo.includes('buchimgae')) {
+                imagemFinal = 'buchimgae.png';
+            } else if (nomeMinusculo.includes('lamen') || nomeMinusculo.includes('lámen')) {
+                imagemFinal = 'lámen.png'; // Nome corrigido com acento
+            } else {
+                imagemFinal = 'lámen.png'; // Foto padrão de segurança
+            }
+        }
+
+        vitrine.innerHTML += `
+            <div class="card">
+                <img src="${imagemFinal}" alt="${p.nome || 'Prato'}">
+                <h3>${p.nome}</h3>
+                <p style="font-weight: bold; color: var(--vermelho); margin-bottom: 5px;">R$ ${Number(p.preco).toFixed(2)}</p>
+                
+                <p style="font-size: 0.85rem; color: #666; margin: 10px 0; min-height: 40px; line-height: 1.4;">
+                    ${p.descricao || ''}
+                </p>
+                
+                <button class="btn btn-vermelho" onclick="addAoCarrinho(${p.id})">Adicionar ao Carrinho</button>
+            </div>`;
+    });
+}
+
+// Preenche o filtro com as categorias da API e filtra a vitrine ao escolher uma
+function ligarFiltroCategoria() {
+    const filtro = document.getElementById("filtroCategoria");
+    if (!filtro) return;
+
+    fetch("/categorias")
+        .then(resposta => resposta.json())
+        .then(categorias => {
+            categorias.forEach(c => {
+                filtro.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+            });
+        })
+        .catch(erro => console.error("Erro ao carregar categorias:", erro));
+
+    filtro.addEventListener("change", () => {
+        const id = Number(filtro.value);
+        mostrarProdutos(id ? produtosDaAPI.filter(p => p.id_categoria_fk === id) : produtosDaAPI);
+    });
 }
 
 // 2. Adiciona o produto à lista do carrinho buscando pelo ID correto
@@ -100,7 +126,7 @@ window.finalizar = function() {
         alert("Seu carrinho está vazio!");
         return;
     }
-    alert("Pedido realizado com sucesso!");
+    alert("Pedido registrado (simulação). O pagamento online ficará para uma versão futura.");
     carrinho = [];
     localStorage.removeItem("carrinho");
     atualizarCarrinho();
