@@ -64,7 +64,7 @@ async function main() {
       nome: 'Ramyeon (Lámen Coreano)',
       descricao: 'Macarrão em caldo vermelho e picante, servido com fatias de frango, kimchi, cogumelos enoki, ovo e cebolinha.',
       preco: 35.00,
-      foto: 'ramyeon1.png',
+      foto: 'ramyeon.jpg',
       categoria: { connect: { id: 1 } }
     },
   });
